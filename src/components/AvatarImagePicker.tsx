@@ -1,0 +1,55 @@
+import * as ImagePicker from 'expo-image-picker'
+import React from 'react'
+import { Image, Pressable, StyleSheet } from 'react-native'
+
+type Props = {
+	avatarUrl: string
+	onImagePicked: (uri: string) => void
+	style?: any
+}
+
+export default function AvatarImage({
+	avatarUrl,
+	onImagePicked,
+	style,
+}: Props) {
+	const pickImage = async () => {
+		const result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ['images'],
+			quality: 0.8,
+		})
+		if (result.assets && result.assets.length > 0) {
+			onImagePicked(result.assets[0].uri)
+		}
+	}
+
+	return (
+		<>
+			<Image
+				source={
+					avatarUrl ? { uri: avatarUrl } : require('@assets/profile_icon.png')
+				}
+				style={[style, { borderRadius: 100 }]}
+			/>
+			<Pressable style={styles.avatarEditIcon} onPress={pickImage}>
+				{({ pressed }) => (
+					<Image
+						source={
+							pressed
+								? require('@assets/edit_icon_clicked.png')
+								: require('@assets/edit_icon.png')
+						}
+					/>
+				)}
+			</Pressable>
+		</>
+	)
+}
+
+const styles = StyleSheet.create({
+	avatarEditIcon: {
+		position: 'absolute',
+		top: 0,
+		right: -40,
+	},
+})

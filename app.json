@@ -1,28 +1,50 @@
 {
-  "expo": {
-    "name": "learn-pocker-app",
-    "slug": "learn-pocker-app",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    }
-  }
+	"expo": {
+		"name": "BlackJack Bison Casino Helper",
+		"slug": "learn-pocker-app",
+		"version": "1.0.0",
+		"orientation": "portrait",
+		"icon": "./assets/app_logo.png",
+		"userInterfaceStyle": "light",
+		"jsEngine": "hermes",
+		"newArchEnabled": true,
+		"assetBundlePatterns": ["**/*"],
+		"splash": {
+			"image": "./assets/main_bg.png",
+			"resizeMode": "cover",
+			"backgroundColor": "#000000"
+		},
+		"ios": {
+			"jsEngine": "jsc",
+			"supportsTablet": true,
+			"bundleIdentifier": "com.arthouse379.learnpockerapp",
+			"infoPlist": {
+				"ITSAppUsesNonExemptEncryption": false
+			}
+		},
+		"android": {
+			"adaptiveIcon": {
+				"foregroundImage": "./assets/app_logo.png",
+				"backgroundColor": "#ffffff"
+			},
+			"package": "com.arthouse379.learnpockerapp"
+		},
+		"web": {
+			"favicon": "./assets/app_logo.png"
+		},
+		"plugins": [
+			[
+				"expo-image-picker",
+				{
+					"photosPermission": "Allow BlackJack Bison Casino Helper to access your photos."
+				}
+			],
+			["expo-font"]
+		],
+		"extra": {
+			"eas": {
+				"projectId": "204646ac-cbdd-4b1b-8d46-945e29efbb33"
+			}
+		}
+	}
 }
