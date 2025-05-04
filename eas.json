@@ -14,6 +14,8 @@
 		"preview": {
 			"android": {
 				"buildType": "apk",
+				"gradleCommand": ":app:assembleRelease",
+				"distribution": "internal",
 				"ndk": "26.1.10909125"
 			}
 		},
