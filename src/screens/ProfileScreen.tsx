@@ -89,7 +89,7 @@ export default function ProfileScreen() {
 		<ImageBackground
 			source={require('@assets/main_bg.png')}
 			style={styles.backgroundImage}
-			resizeMode='cover'
+			resizeMode='contain'
 		>
 			<AnimatedStars />
 			<SafeAreaView>
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
 	avatar: {
 		width: 175,
 		height: 175,
-		borderRadius: '100%',
+		borderRadius: 100,
 	},
 	avatarEditIcon: {
 		position: 'absolute',

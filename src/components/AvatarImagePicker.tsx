@@ -13,7 +13,21 @@ export default function AvatarImagePicker({
 	onImagePicked,
 	style,
 }: Props) {
+	const requestPermission = async () => {
+		const { status, canAskAgain } =
+			await ImagePicker.requestMediaLibraryPermissionsAsync()
+		if (status !== 'granted') {
+			if (!canAskAgain) {
+				alert('Please allow access to photos by your device settings.')
+			}
+			return false
+		}
+		return true
+	}
+
 	const pickImage = async () => {
+		const granted = await requestPermission()
+		if (!granted) return
 		const result = await ImagePicker.launchImageLibraryAsync({
 			mediaTypes: ['images'],
 			quality: 0.8,
