@@ -105,7 +105,7 @@ const MainMenuScreen: React.FC = () => {
 						<Pressable
 							style={styles.primaryButton}
 							onPress={() => {
-								navigation.navigate('MainMenu' as never)
+								navigation.navigate('StrategyGuide' as never)
 							}}
 						>
 							{({ pressed }) => (

@@ -39,21 +39,15 @@ export default function AvatarImagePicker({
 
 	return (
 		<>
-			<Image
-				source={
-					avatarUrl ? { uri: avatarUrl } : require('@assets/profile_icon.png')
-				}
-				style={
-					avatarUrl
-						? style
-						: {
-								backgroundColor: '#fff',
-								borderWidth: 5,
-								borderColor: '#0084FF',
-						  }
-				}
-				resizeMode='cover'
-			/>
+			{avatarUrl ? (
+				<Image source={{ uri: avatarUrl }} style={style} resizeMode='cover' />
+			) : (
+				<Image
+					source={require('@assets/profile_icon.png')}
+					style={style}
+					resizeMode='cover'
+				/>
+			)}
 			<Pressable style={styles.avatarEditIcon} onPress={pickImage}>
 				{({ pressed }) => (
 					<Image
