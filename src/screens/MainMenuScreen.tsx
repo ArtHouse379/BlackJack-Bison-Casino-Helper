@@ -139,7 +139,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		paddingHorizontal: 30,
 		alignItems: 'center',
-		justifyContent: 'space-between',
 		position: 'relative',
 	},
 	header: {
@@ -150,7 +149,7 @@ const styles = StyleSheet.create({
 	buttonsContainer: {
 		flexDirection: 'row',
 		flexWrap: 'wrap',
-		marginTop: height * 0.05,
+		marginTop: height * 0.1,
 	},
 	btnContainer: {
 		width: (width - 30 * 2 - 24) / 2,
@@ -169,7 +168,7 @@ const styles = StyleSheet.create({
 	},
 	actionContainer: {
 		alignItems: 'center',
-		marginVertical: height * 0.08,
+		marginTop: height * 0.1,
 	},
 	primaryButton: {
 		alignItems: 'center',
