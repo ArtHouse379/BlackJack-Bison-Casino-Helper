@@ -21,6 +21,7 @@ import {
 	Text,
 	View,
 } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const { width, height } = Dimensions.get('window')
 
@@ -33,6 +34,7 @@ const HandDecisionScreen: React.FC = () => {
 	const [modalVisible, setModalVisible] = React.useState(false)
 	const [editingIndex, setEditingIndex] = React.useState<number | null>(null)
 	const [editingDealer, setEditingDealer] = React.useState(false)
+	const [errorMessage, setErrorMessage] = React.useState<string | null>(null)
 	const {
 		playerCards,
 		dealerCard,
@@ -61,6 +63,16 @@ const HandDecisionScreen: React.FC = () => {
 
 	const handleRecalculate = () => {
 		if (!dealerCard || playerCards.length < 2 || !selectedAction) return
+
+		// Проверка для SPLIT
+		if (
+			selectedAction === 'SPLIT' &&
+			playerCards[0].value !== playerCards[1].value
+		) {
+			setErrorMessage('FOR SPLIT ACTION PLAYER CARDS MUST BE EQUAL')
+			setTimeout(() => setErrorMessage(null), 2000)
+			return
+		}
 
 		const probability = calculateWinningProbability({
 			playerHand: playerCards,
@@ -101,150 +113,161 @@ const HandDecisionScreen: React.FC = () => {
 			source={require('@assets/main_bg.png')}
 			style={styles.background}
 		>
-			<View style={styles.container}>
-				{/* Кнопка назад */}
-				<View style={styles.header}>
-					<BackButton propsFn={resetGame} />
-				</View>
-
-				{/* Заголовок страницы */}
-				<View style={styles.headerText}>
-					<Text
-						style={[
-							TYPOGRAPHY.H2,
-							{ width: 220, textAlign: 'center', marginBottom: 30 },
-						]}
-					>
-						Hand Decision Calculator
-					</Text>
-				</View>
-
-				{/* Секция с картами игрока */}
-				<View style={styles.section}>
-					<ImageBackground
-						source={require('@assets/player_cards_placeholder.png')}
-						accessible={false}
-						resizeMode='contain'
-						style={styles.cardContainer}
-					>
-						<Text style={[TYPOGRAPHY.H12, styles.sectionTitle]}>
-							PLAYER CARDS
-						</Text>
-					</ImageBackground>
-					<View style={styles.cardsContainer}>
-						{playerCards.map((card, index) => (
-							<CardDisplay
-								key={index}
-								value={card.value}
-								suit={card.suit}
-								onEdit={() => {
-									setEditingIndex(index)
-									setEditingDealer(false)
-									setModalVisible(true)
-								}}
-							/>
-						))}
+			<SafeAreaView edges={['top', 'bottom']} style={{ flex: 1 }}>
+				<View style={styles.container}>
+					{/* Кнопка назад */}
+					<View style={styles.header}>
+						<BackButton propsFn={resetGame} />
 					</View>
-				</View>
-
-				{/* Секция с картой дилера */}
-				<View style={styles.section}>
-					<ImageBackground
-						source={require('@assets/up_card_placeholder.png')}
-						accessible={false}
-						resizeMode='contain'
-						style={styles.cardContainer}
-					>
-						<Text style={[TYPOGRAPHY.H12, styles.sectionTitle]}>UP CARD</Text>
-					</ImageBackground>
-					<View style={styles.cardsContainer}>
-						{dealerCard && (
-							<CardDisplay
-								value={dealerCard.value}
-								suit={dealerCard.suit}
-								onEdit={() => {
-									setEditingDealer(true)
-									setModalVisible(true)
-								}}
-							/>
-						)}
-					</View>
-				</View>
-
-				{/* Секция с кнопками действий */}
-				<View style={styles.actionsContainer}>
-					<View style={styles.actionsRow}>
-						<ActionButton
-							active={selectedAction === 'HIT' ? true : false}
-							image={actionButtonsPaths.regular}
-							clicked={actionButtonsPaths.clicked}
-							title='HIT'
-							onPress={() => setSelectedAction('HIT')}
-						/>
-						<ActionButton
-							active={selectedAction === 'DOUBLE' ? true : false}
-							image={actionButtonsPaths.regular}
-							clicked={actionButtonsPaths.clicked}
-							title='DOUBLE'
-							onPress={() => setSelectedAction('DOUBLE')}
-						/>
-						<ActionButton
-							active={selectedAction === 'STAND' ? true : false}
-							image={actionButtonsPaths.regular}
-							clicked={actionButtonsPaths.clicked}
-							title='STAND'
-							onPress={() => setSelectedAction('STAND')}
+					{/* Заголовок страницы */}
+					<View style={styles.headerText}>
+						<Image
+							source={require('@assets/page_headers/hand_decision_header.png')}
+							resizeMode='contain'
+							style={{ marginBottom: height * 0.02 }}
 						/>
 					</View>
-					<View style={styles.splitButtonContainer}>
-						<ActionButton
-							active={selectedAction === 'SPLIT' ? true : false}
-							image={actionButtonsPaths.regular}
-							clicked={actionButtonsPaths.clicked}
-							title='SPLIT'
-							onPress={() => setSelectedAction('SPLIT')}
-						/>
-					</View>
-				</View>
 
-				{/* Секция с результатом */}
-				<ResultDisplay percentage={winChance} />
-
-				{/* Кнопка пересчета */}
-				<Pressable
-					disabled={!selectedAction}
-					style={styles.recalculateButtonContainer}
-					onPress={handleRecalculate}
-				>
-					{({ pressed }) => (
-						<>
-							<Image
-								style={styles.recalculateButton}
-								source={
-									pressed
-										? require('@assets/buttons/recalculate_button_clicked.png')
-										: require('@assets/buttons/recalculate_button.png')
-								}
-							/>
-							<Text style={[TYPOGRAPHY.H31, styles.recalculateText]}>
-								Recalculate
+					{/* Секция с картами игрока */}
+					<View style={styles.section}>
+						<ImageBackground
+							source={require('@assets/player_cards_placeholder.png')}
+							accessible={false}
+							resizeMode='contain'
+							style={styles.cardContainer}
+						>
+							<Text style={[TYPOGRAPHY.H12, styles.sectionTitle]}>
+								PLAYER CARDS
 							</Text>
-						</>
-					)}
-				</Pressable>
-			</View>
-			<CardPickerModal
-				visible={modalVisible}
-				onClose={() => setModalVisible(false)}
-				usedCards={[...playerCards, ...(dealerCard ? [dealerCard] : [])]}
-				onSelect={card => {
-					if (editingDealer) {
-						setDealerCard(card)
-					} else if (editingIndex !== null) {
-						updatePlayerCard(editingIndex, card)
-					}
-				}}
-			/>
+						</ImageBackground>
+						<View style={styles.cardsContainer}>
+							{playerCards.map((card, index) => (
+								<CardDisplay
+									key={index}
+									value={card.value}
+									suit={card.suit}
+									onEdit={() => {
+										setEditingIndex(index)
+										setEditingDealer(false)
+										setModalVisible(true)
+									}}
+								/>
+							))}
+						</View>
+					</View>
+
+					{/* Секция с картой дилера */}
+					<View style={styles.section}>
+						<ImageBackground
+							source={require('@assets/up_card_placeholder.png')}
+							accessible={false}
+							resizeMode='contain'
+							style={styles.cardContainer}
+						>
+							<Text style={[TYPOGRAPHY.H12, styles.sectionTitle]}>UP CARD</Text>
+						</ImageBackground>
+						<View style={styles.cardsContainer}>
+							{dealerCard && (
+								<CardDisplay
+									value={dealerCard.value}
+									suit={dealerCard.suit}
+									onEdit={() => {
+										setEditingDealer(true)
+										setModalVisible(true)
+									}}
+								/>
+							)}
+						</View>
+					</View>
+
+					{/* Секция с кнопками действий */}
+					<View style={styles.actionsContainer}>
+						<View style={styles.actionsRow}>
+							<ActionButton
+								active={selectedAction === 'HIT' ? true : false}
+								image={actionButtonsPaths.regular}
+								clicked={actionButtonsPaths.clicked}
+								title='HIT'
+								onPress={() => setSelectedAction('HIT')}
+							/>
+							<ActionButton
+								active={selectedAction === 'DOUBLE' ? true : false}
+								image={actionButtonsPaths.regular}
+								clicked={actionButtonsPaths.clicked}
+								title='DOUBLE'
+								onPress={() => setSelectedAction('DOUBLE')}
+							/>
+							<ActionButton
+								active={selectedAction === 'STAND' ? true : false}
+								image={actionButtonsPaths.regular}
+								clicked={actionButtonsPaths.clicked}
+								title='STAND'
+								onPress={() => setSelectedAction('STAND')}
+							/>
+						</View>
+						<View style={styles.splitButtonContainer}>
+							<ActionButton
+								active={selectedAction === 'SPLIT' ? true : false}
+								image={actionButtonsPaths.regular}
+								clicked={actionButtonsPaths.clicked}
+								title='SPLIT'
+								onPress={() => setSelectedAction('SPLIT')}
+							/>
+						</View>
+					</View>
+
+					{/* Секция с результатом */}
+					<ResultDisplay percentage={winChance} />
+
+					{/* Кнопка пересчета */}
+					<Pressable
+						disabled={!selectedAction}
+						style={styles.recalculateButtonContainer}
+						onPress={handleRecalculate}
+					>
+						{({ pressed }) => (
+							<>
+								<Image
+									style={styles.recalculateButton}
+									source={
+										pressed
+											? require('@assets/buttons/recalculate_button_clicked.png')
+											: require('@assets/buttons/recalculate_button.png')
+									}
+								/>
+								<Text style={[TYPOGRAPHY.H31, styles.recalculateText]}>
+									Recalculate
+								</Text>
+							</>
+						)}
+					</Pressable>
+				</View>
+				{/* Сообщение об ошибке */}
+				{errorMessage && (
+					<View style={{ alignItems: 'center', marginBottom: 10 }}>
+						<Text
+							style={[
+								TYPOGRAPHY.H24,
+								{ color: '#FFD700', textAlign: 'center' },
+							]}
+						>
+							{errorMessage}
+						</Text>
+					</View>
+				)}
+				<CardPickerModal
+					visible={modalVisible}
+					onClose={() => setModalVisible(false)}
+					usedCards={[...playerCards, ...(dealerCard ? [dealerCard] : [])]}
+					onSelect={card => {
+						if (editingDealer) {
+							setDealerCard(card)
+						} else if (editingIndex !== null) {
+							updatePlayerCard(editingIndex, card)
+						}
+					}}
+				/>
+			</SafeAreaView>
 		</ImageBackground>
 	)
 }
@@ -256,19 +279,13 @@ const styles = StyleSheet.create({
 	header: {
 		alignItems: 'flex-start',
 		paddingHorizontal: 20,
-		marginTop: height * 0.06,
 	},
 	headerText: {
 		alignItems: 'center',
 		marginTop: -40,
 	},
 	background: {
-		position: 'absolute',
-		top: 0,
-		left: 0,
-		right: 0,
-		bottom: 0,
-		opacity: 1,
+		flex: 1,
 	},
 	cardContainer: {
 		alignSelf: 'center',
@@ -286,8 +303,7 @@ const styles = StyleSheet.create({
 	cardsContainer: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
-		paddingHorizontal: 45,
-		flexWrap: 'wrap',
+		paddingHorizontal: width * 0.2,
 		marginTop: height * 0.01,
 	},
 	actionsContainer: {

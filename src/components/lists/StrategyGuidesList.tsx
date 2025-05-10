@@ -38,7 +38,7 @@ const StrategyGuidesList: React.FC<StrategyGuidesListProps> = ({ list }) => {
 						<Text style={[TYPOGRAPHY.H7, styles.sectionTitle]}>
 							{item.title}
 						</Text>
-						<Text style={[TYPOGRAPHY.H8, styles.sectionContent]}>
+						<Text style={TYPOGRAPHY.H8}>
 							{expandedItems[item.title] ? item.text : truncateText(item.text)}
 						</Text>
 						<TouchableOpacity onPress={() => toggleExpand(item.title)}>
@@ -54,7 +54,7 @@ const StrategyGuidesList: React.FC<StrategyGuidesListProps> = ({ list }) => {
 	)
 }
 const styles = StyleSheet.create({
-	content: { padding: 25, marginTop: 40, flex: 1 },
+	content: { marginTop: 15, flex: 1 },
 	section: {
 		backgroundColor: '#007BFF',
 		opacity: 0.8,
@@ -63,7 +63,6 @@ const styles = StyleSheet.create({
 		marginBottom: 15,
 	},
 	sectionTitle: { textAlign: 'center' },
-	sectionContent: {},
 	openAll: {
 		textDecorationLine: 'underline',
 		textAlign: 'right',

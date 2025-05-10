@@ -43,11 +43,12 @@ const StrategyThemesNavButton: React.FC<StrategyThemesNavButtonProps> = ({
 	}
 
 	return (
-		<View style={styles.container}>
-			<ImageBackground
-				style={styles.bgImage}
-				source={require('../../../assets/themes_plate.png')}
-			>
+		<ImageBackground
+			style={styles.bgImage}
+			source={require('@assets/themes_plate.png')}
+			resizeMode='contain'
+		>
+			<View style={styles.container}>
 				<Pressable
 					style={[styles.button, styles.leftArrow]}
 					onPress={() => onPressHandler('left')}
@@ -83,8 +84,8 @@ const StrategyThemesNavButton: React.FC<StrategyThemesNavButtonProps> = ({
 						/>
 					)}
 				</Pressable>
-			</ImageBackground>
-		</View>
+			</View>
+		</ImageBackground>
 	)
 }
 
@@ -93,36 +94,31 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	bgImage: {
-		width: 220,
-		height: 60,
-		flex: 1,
+		width: 225,
+		height: 65,
+		alignSelf: 'center',
 		justifyContent: 'center',
 		position: 'relative',
 		opacity: 0.8,
 	},
 	text: {
-		position: 'absolute',
-		top: 5,
-		left: 50,
 		width: 120,
 		textAlign: 'center',
 	},
 	button: {
 		position: 'absolute',
-		top: 15,
-		justifyContent: 'center',
-		alignItems: 'center',
+		top: 10,
 	},
 	image: {
-		width: 15,
-		height: 23,
-		resizeMode: 'cover',
+		width: 22,
+		height: 22,
+		resizeMode: 'contain',
 	},
 	leftArrow: {
-		left: 10,
+		left: 15,
 	},
 	rightArrow: {
-		right: 10,
+		right: 15,
 	},
 })
 

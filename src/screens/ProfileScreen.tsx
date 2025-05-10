@@ -1,5 +1,5 @@
 import AnimatedStars from '@/components/animation/AnimatedStars'
-import AvatarImage from '@/components/AvatarImagePicker'
+import AvatarImagePicker from '@/components/AvatarImagePicker'
 import BackButton from '@/components/buttons/BackButton'
 import SettingsButton from '@/components/buttons/SettingsButton'
 import { TYPOGRAPHY } from '@/constants/typography'
@@ -9,24 +9,23 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useNavigation } from '@react-navigation/native'
 import React, { useEffect, useState } from 'react'
 import {
-	Dimensions,
 	Image,
 	ImageBackground,
 	Pressable,
+	ScrollView,
 	StyleSheet,
 	Text,
 	TextInput,
 	View,
 } from 'react-native'
-
-const { width, height } = Dimensions.get('window')
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function ProfileScreen() {
 	const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(true)
 	const [isEditingNickname, setIsEditingNickname] = useState(false)
 	const [nickname, setNickname] = useState('Nickname')
 	const [language, setLanguage] = useState('English')
-	const [avatarUrl, setAvatarUrl] = useState('@assets/profile_icon.png')
+	const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
 	const [handsPlayed, setHandsPlayed] = useState(0)
 	const [strategyTestsPassed, setStrategyTestsPassed] = useState(0)
 	const navigation = useNavigation()
@@ -59,11 +58,6 @@ export default function ProfileScreen() {
 		if (updates.language !== undefined) setLanguage(updated.language)
 	}
 
-	const onAvatarEdit = () => {
-		//? TODO: Add avatar edit functionality
-		// handleProfileUpdate({ avatarUrl: 'новый путь' })
-	}
-
 	const onNicknameEdit = () => {
 		setIsEditingNickname(true)
 	}
@@ -77,7 +71,8 @@ export default function ProfileScreen() {
 		handleProfileUpdate({ username: nickname })
 	}
 
-	const onNotificationsToggle = () => {
+	const onNotificationsToggle = async () => {
+		setIsNotificationsEnabled(!isNotificationsEnabled)
 		handleProfileUpdate({ isNotificationEnabled: !isNotificationsEnabled })
 	}
 
@@ -97,120 +92,132 @@ export default function ProfileScreen() {
 			resizeMode='cover'
 		>
 			<AnimatedStars />
-			<View style={styles.container}>
-				{/* Top buttons */}
-				<View style={styles.topBar}>
-					<BackButton />
-					<Image source={require('@assets/page_headers/profile_header.png')} />
-					<SettingsButton />
-				</View>
-				{/* Avatar and nickname */}
-				<View style={styles.avatarSection}>
-					<View style={styles.avatarContainer}>
-						<AvatarImage
-							avatarUrl={avatarUrl}
-							onImagePicked={handleAvatarPicked}
-							style={styles.avatar}
+			<SafeAreaView>
+				<View style={styles.container}>
+					{/* Top buttons */}
+					<View style={styles.topBar}>
+						<BackButton />
+						<Image
+							source={require('@assets/page_headers/profile_header.png')}
 						/>
+						<SettingsButton />
 					</View>
-					<View style={styles.nicknameWrapper}>
-						<View style={styles.nicknameContainer}>
-							{isEditingNickname ? (
-								<TextInput
-									style={[TYPOGRAPHY.H23, { minWidth: 100 }]}
-									value={nickname}
-									autoFocus
-									onChangeText={onNicknameChange}
-									onBlur={onNicknameSubmit}
-									onSubmitEditing={onNicknameSubmit}
-									returnKeyType='done'
+					<ScrollView contentInset={{ top: 0, left: 0, bottom: 20, right: 0 }}>
+						{/* Avatar and nickname */}
+						<View style={styles.avatarSection}>
+							<View style={styles.avatarContainer}>
+								<AvatarImagePicker
+									avatarUrl={avatarUrl}
+									onImagePicked={handleAvatarPicked}
+									style={styles.avatar}
 								/>
-							) : (
-								<>
-									<Text style={TYPOGRAPHY.H23}>{nickname}</Text>
-									<Pressable
-										style={styles.nicknameEditIcon}
-										onPress={onNicknameEdit}
-									>
-										{({ pressed }) => (
-											<Image
-												source={
-													pressed
-														? require('@assets/edit_icon_clicked.png')
-														: require('@assets/edit_icon.png')
-												}
-											/>
-										)}
-									</Pressable>
-								</>
-							)}
+							</View>
+							<View style={styles.nicknameWrapper}>
+								<View style={styles.nicknameContainer}>
+									{isEditingNickname ? (
+										<TextInput
+											style={[TYPOGRAPHY.H23, { minWidth: 100 }]}
+											value={nickname}
+											autoFocus
+											onChangeText={onNicknameChange}
+											onBlur={onNicknameSubmit}
+											onSubmitEditing={onNicknameSubmit}
+											returnKeyType='done'
+										/>
+									) : (
+										<>
+											<Text style={TYPOGRAPHY.H23}>{nickname}</Text>
+											<Pressable
+												style={styles.nicknameEditIcon}
+												onPress={onNicknameEdit}
+											>
+												{({ pressed }) => (
+													<Image
+														source={
+															pressed
+																? require('@assets/edit_icon_clicked.png')
+																: require('@assets/edit_icon.png')
+														}
+													/>
+												)}
+											</Pressable>
+										</>
+									)}
+								</View>
+							</View>
 						</View>
-					</View>
-				</View>
 
-				{/* Notifications */}
-				<View style={styles.notificationsRow}>
-					<Text style={TYPOGRAPHY.H24}>Notifications</Text>
-					<Pressable onPress={onNotificationsToggle}>
-						{isNotificationsEnabled ? (
-							<Image source={require('@assets/switch_on.png')} />
-						) : (
-							<Image source={require('@assets/switch_off.png')} />
-						)}
-					</Pressable>
-				</View>
+						{/* Notifications */}
+						<View style={styles.notificationsRow}>
+							<Text style={TYPOGRAPHY.H24}>Notifications</Text>
+							<Pressable onPress={onNotificationsToggle}>
+								{isNotificationsEnabled ? (
+									<Image source={require('@assets/switch_on.png')} />
+								) : (
+									<Image source={require('@assets/switch_off.png')} />
+								)}
+							</Pressable>
+						</View>
 
-				{/* Language */}
-				<View style={styles.languageWrapper}>
-					<View style={styles.languageRow}>
-						<Text style={[TYPOGRAPHY.H10, { color: '#0084FF' }]}>
-							{language}
-						</Text>
-						<Pressable
-							style={styles.nicknameEditIcon}
-							onPress={() =>
-								onLanguageChange(language === 'English' ? 'Russian' : 'English')
-							}
-						>
-							{({ pressed }) => (
-								<Image
-									source={
-										pressed
-											? require('@assets/edit_icon_clicked.png')
-											: require('@assets/edit_icon.png')
+						{/* Language */}
+						<View style={styles.languageWrapper}>
+							<View style={styles.languageRow}>
+								<Text style={[TYPOGRAPHY.H10, { color: '#0084FF' }]}>
+									{language}
+								</Text>
+								<Pressable
+									style={styles.nicknameEditIcon}
+									onPress={() =>
+										onLanguageChange(
+											language === 'English' ? 'Russian' : 'English'
+										)
 									}
-								/>
-							)}
-						</Pressable>
-					</View>
-				</View>
-
-				<View style={styles.getPremiumContainer}>
-					<Pressable onPress={() => navigation.navigate('Premium' as never)}>
-						<Text style={[TYPOGRAPHY.H23, { textDecorationLine: 'underline' }]}>
-							Get Premium...!
-						</Text>
-					</Pressable>
-				</View>
-
-				{/* Stats */}
-				<View style={styles.statsSection}>
-					<View style={styles.statItem}>
-						<View>
-							<Image source={require('@assets/cards_icon.png')} />
+								>
+									{({ pressed }) => (
+										<Image
+											source={
+												pressed
+													? require('@assets/edit_icon_clicked.png')
+													: require('@assets/edit_icon.png')
+											}
+										/>
+									)}
+								</Pressable>
+							</View>
 						</View>
-						<Text style={TYPOGRAPHY.H25}>{handsPlayed} HANDS PLAYED</Text>
-					</View>
-					<View style={styles.statItem}>
-						<View>
-							<Image source={require('@assets/strategy_icon.png')} />
+
+						<View style={styles.getPremiumContainer}>
+							<Pressable
+								onPress={() => navigation.navigate('Premium' as never)}
+							>
+								<Text
+									style={[TYPOGRAPHY.H25, { textDecorationLine: 'underline' }]}
+								>
+									Get Premium...!
+								</Text>
+							</Pressable>
 						</View>
-						<Text style={TYPOGRAPHY.H25}>
-							{strategyTestsPassed} STRATEGY TESTS PASSED
-						</Text>
-					</View>
+
+						{/* Stats */}
+						<View style={styles.statsSection}>
+							<View style={styles.statItem}>
+								<View>
+									<Image source={require('@assets/cards_icon.png')} />
+								</View>
+								<Text style={TYPOGRAPHY.H25}>{handsPlayed} HANDS PLAYED</Text>
+							</View>
+							<View style={styles.statItem}>
+								<View>
+									<Image source={require('@assets/strategy_icon.png')} />
+								</View>
+								<Text style={TYPOGRAPHY.H25}>
+									{strategyTestsPassed} STRATEGY TESTS PASSED
+								</Text>
+							</View>
+						</View>
+					</ScrollView>
 				</View>
-			</View>
+			</SafeAreaView>
 		</ImageBackground>
 	)
 }
@@ -226,7 +233,6 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
-		marginTop: height * 0.06,
 	},
 	circleButton: {
 		width: 70,
@@ -244,7 +250,7 @@ const styles = StyleSheet.create({
 	},
 	avatarSection: {
 		alignItems: 'center',
-		marginVertical: 30,
+		marginTop: 30,
 	},
 	avatarContainer: {
 		position: 'relative',
@@ -254,6 +260,7 @@ const styles = StyleSheet.create({
 	avatar: {
 		width: 175,
 		height: 175,
+		borderRadius: '100%',
 	},
 	avatarEditIcon: {
 		position: 'absolute',
@@ -286,13 +293,8 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'center',
 		alignItems: 'center',
-		marginTop: 60,
+		marginTop: 75,
 		columnGap: 20,
-	},
-	notificationsText: {
-		fontSize: 18,
-		fontWeight: 'bold',
-		color: '#fff',
 	},
 	languageWrapper: {
 		marginTop: 30,
@@ -307,17 +309,17 @@ const styles = StyleSheet.create({
 		borderRadius: 20,
 	},
 	getPremiumContainer: {
-		marginTop: 50,
+		marginTop: 40,
 		alignItems: 'center',
 	},
 	statsSection: {
-		marginTop: 50,
+		marginVertical: 50,
 		alignItems: 'center',
+		rowGap: 30,
 	},
 	statItem: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		marginBottom: 30,
 		columnGap: 10,
 	},
 })

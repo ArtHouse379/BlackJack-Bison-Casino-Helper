@@ -39,6 +39,7 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ value, suit, onEdit }) => {
 			<Pressable onPress={onEdit}>
 				{({ pressed }) => (
 					<Image
+						resizeMode='contain'
 						source={
 							pressed
 								? require('@assets/edit_icon_clicked.png')
@@ -53,12 +54,10 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ value, suit, onEdit }) => {
 
 const styles = StyleSheet.create({
 	container: {
-		width: 150,
-		height: 50,
+		width: '30%',
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'center',
-		marginHorizontal: 10,
 	},
 	cardContainer: {
 		flexDirection: 'row',

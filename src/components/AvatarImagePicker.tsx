@@ -3,12 +3,12 @@ import React from 'react'
 import { Image, Pressable, StyleSheet } from 'react-native'
 
 type Props = {
-	avatarUrl: string
+	avatarUrl: string | null
 	onImagePicked: (uri: string) => void
 	style?: any
 }
 
-export default function AvatarImage({
+export default function AvatarImagePicker({
 	avatarUrl,
 	onImagePicked,
 	style,
@@ -29,7 +29,16 @@ export default function AvatarImage({
 				source={
 					avatarUrl ? { uri: avatarUrl } : require('@assets/profile_icon.png')
 				}
-				style={[style, { borderRadius: 100 }]}
+				style={
+					avatarUrl
+						? style
+						: {
+								backgroundColor: '#fff',
+								borderWidth: 5,
+								borderColor: '#0084FF',
+						  }
+				}
+				resizeMode='cover'
 			/>
 			<Pressable style={styles.avatarEditIcon} onPress={pickImage}>
 				{({ pressed }) => (

@@ -7,10 +7,10 @@ import { TYPOGRAPHY } from '@/constants/typography'
 import { getHandValue } from '@/logic/HandSimulatorLogic/GetHandValue'
 import { generateRandomCard } from '@/logic/HandSimulatorLogic/GetRandomCard'
 import { getWinner } from '@/logic/HandSimulatorLogic/GetWinner'
+import { isOptimalBlackjackAction } from '@/logic/HandSimulatorLogic/isOptimalBlackJackAction'
 import { saveSimulationToUserProfile } from '@/logic/HandSimulatorLogic/saveSimulationResult'
 import { useSimulatorStore } from '@/store/Simulator/SimulatorStore'
 import { ActionType, PlayingCardType } from '@/types/PlayingCard'
-import { SimulationResult } from '@/types/SimulationResult'
 import React from 'react'
 import {
 	Dimensions,
@@ -21,6 +21,7 @@ import {
 	Text,
 	View,
 } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const { width, height } = Dimensions.get('window')
 
@@ -33,6 +34,9 @@ const HandSimulatorScreen: React.FC = () => {
 	const [activeHandIndex, setActiveHandIndex] = React.useState<0 | 1>(0)
 	const [isActionBlocked, setIsActionBlocked] = React.useState(false)
 	const [selectedActions, setSelectedActions] = React.useState<ActionType[]>([])
+	const [playerMovesEfficiency, setPlayerMovesEfficiency] = React.useState<
+		boolean[]
+	>([])
 	const isInteractionLocked = isDealerTurn || isActionBlocked
 
 	const {
@@ -56,7 +60,7 @@ const HandSimulatorScreen: React.FC = () => {
 		clicked: require('@assets/buttons/action_button_small_clicked.png'),
 	}
 
-	const handlePress = async (action: string) => {
+	const handlePress = async (action: ActionType) => {
 		if (isActionBlocked || resultMessage) return
 		const allUsedCards = [
 			...playerCards,
@@ -80,6 +84,16 @@ const HandSimulatorScreen: React.FC = () => {
 			}
 
 			return currentHand
+		}
+
+		if (playerCards.length > 0) {
+			const actionEfficiency = isOptimalBlackjackAction(
+				playerCards,
+				dealerCards,
+				action
+			)
+
+			setPlayerMovesEfficiency([...playerMovesEfficiency, actionEfficiency])
 		}
 
 		switch (action) {
@@ -124,8 +138,8 @@ const HandSimulatorScreen: React.FC = () => {
 					setIsDealerTurn(false)
 
 					const result = getWinner(updated, dealerFinal)
-
 					setResultMessage(`${result}`)
+					simulationResults(result)
 					setIsActionBlocked(false)
 				}
 				setSelectedActions([...selectedActions, action])
@@ -154,10 +168,7 @@ const HandSimulatorScreen: React.FC = () => {
 						: `${result1}`
 
 					setResultMessage(output)
-					const result = simulationResults(output)
-					if (result) {
-						saveSimulationToUserProfile(result)
-					}
+					simulationResults(output)
 					setIsActionBlocked(false)
 				}
 				break
@@ -181,29 +192,28 @@ const HandSimulatorScreen: React.FC = () => {
 		}
 	}
 
-	const simulationResults = (
-		outputResult: string
-	): SimulationResult | undefined => {
-		const resultMap: Record<string, 'win' | 'lose' | 'draw'> = {
-			'Player wins': 'win',
-			'Dealer Busts — Player Wins': 'win',
-			'Dealer wins': 'lose',
-			'Player Busts — Dealer Wins': 'lose',
-			Draw: 'draw',
+	const simulationResults = (outputResult: string): any => {
+		let simulationResult: 'win' | 'lose' | 'draw'
+		const lower = outputResult.toLowerCase()
+		if (lower.includes('player wins')) {
+			simulationResult = 'win'
+		} else if (lower.includes('draw')) {
+			simulationResult = 'draw'
+		} else {
+			simulationResult = 'lose'
 		}
 
-		const simulationResult = resultMap[outputResult ?? '']
-		if (!simulationResult) return undefined
-
-		return {
+		//? сохраняем результат в профиль пользователя
+		saveSimulationToUserProfile({
 			createAt: new Date().toISOString(),
 			playerCards,
 			secondHand: secondHandCards || null,
+			playerActionsEfficiency: playerMovesEfficiency,
 			opponentCars: opponentCards,
 			dealerCards: dealerCards,
 			selectedActions: selectedActions,
 			simulationResult,
-		}
+		})
 	}
 
 	React.useEffect(() => {
@@ -220,239 +230,256 @@ const HandSimulatorScreen: React.FC = () => {
 		resetAll()
 		setResultMessage(null)
 		setSecondHandCards([])
+		setSelectedActions([])
+		setPlayerMovesEfficiency([])
+		setActiveHandIndex(0)
+		setIsActionBlocked(false)
 	}
 
 	return (
-		<View style={styles.container}>
-			<ImageBackground
-				source={require('@assets/main_bg.png')}
-				style={styles.backgroundImage}
-			/>
-			{/* Кнопка назад */}
-			<View style={styles.header}>
-				<BackButton propsFn={resetGame} />
-			</View>
+		<ImageBackground
+			source={require('@assets/main_bg.png')}
+			style={styles.backgroundImage}
+			resizeMode='contain'
+		>
+			<SafeAreaView edges={['top', 'bottom']} style={{ flex: 1 }}>
+				<View style={styles.container}>
+					{/* Кнопка назад */}
+					<View style={styles.header}>
+						<BackButton propsFn={resetGame} />
+					</View>
 
-			{/* Заголовок страницы */}
-			<View style={styles.headerText}>
-				<Text
-					style={[
-						TYPOGRAPHY.H2,
-						{ width: 248, textAlign: 'center', marginBottom: 35 },
-					]}
-				>
-					BlackJack Hand Simulator
-				</Text>
-			</View>
+					{/* Заголовок страницы */}
+					<View style={styles.headerText}>
+						<Image
+							source={require('@assets/page_headers/hand_simulator_header.png')}
+							resizeMode='contain'
+							style={{ marginBottom: height * 0.02 }}
+						/>
+					</View>
 
-			<View>
-				{isAwaitChoice ? (
-					<ImageBackground
-						key={isAwaitChoice ? 'themes' : 'theme'}
-						source={themeImageSource}
-						resizeMode='contain'
-						style={isAwaitChoice ? styles.themesBgImage : styles.themeBgImage}
-					>
-						<Pressable onPress={() => setIsAwaitChoice(false)}>
-							<Text style={[TYPOGRAPHY.H12, { marginTop: 5 }]}>
-								{choosedTheme}
-							</Text>
-						</Pressable>
-						{themes.map(item => {
-							return (
-								<Pressable
-									key={item}
-									style={{ height: 45 }}
-									onPress={() => {
-										setChoosedTheme(item)
-										setIsAwaitChoice(false)
-									}}
-								>
-									<Text style={[TYPOGRAPHY.H11, { color: '#0084FF' }]}>
-										{item}
+					<View>
+						{isAwaitChoice ? (
+							<ImageBackground
+								key={isAwaitChoice ? 'themes' : 'theme'}
+								source={themeImageSource}
+								resizeMode='contain'
+								style={
+									isAwaitChoice ? styles.themesBgImage : styles.themeBgImage
+								}
+							>
+								<Pressable onPress={() => setIsAwaitChoice(false)}>
+									<Text style={[TYPOGRAPHY.H12, { marginTop: 5 }]}>
+										{choosedTheme}
 									</Text>
 								</Pressable>
-							)
-						})}
-					</ImageBackground>
-				) : (
-					<ImageBackground
-						key={isAwaitChoice ? 'themes' : 'theme'}
-						source={themeImageSource}
-						resizeMode='contain'
-						style={isAwaitChoice ? styles.themesBgImage : styles.themeBgImage}
-					>
-						<Text style={[TYPOGRAPHY.H12, { marginTop: 5 }]}>
-							{choosedTheme}
-						</Text>
+								{themes.map(item => {
+									return (
+										<Pressable
+											key={item}
+											style={{ height: 45 }}
+											onPress={() => {
+												setChoosedTheme(item)
+												setIsAwaitChoice(false)
+											}}
+										>
+											<Text style={[TYPOGRAPHY.H11, { color: '#0084FF' }]}>
+												{item}
+											</Text>
+										</Pressable>
+									)
+								})}
+							</ImageBackground>
+						) : (
+							<ImageBackground
+								key={isAwaitChoice ? 'themes' : 'theme'}
+								source={themeImageSource}
+								resizeMode='contain'
+								style={
+									isAwaitChoice ? styles.themesBgImage : styles.themeBgImage
+								}
+							>
+								<Text style={[TYPOGRAPHY.H12, { marginTop: 5 }]}>
+									{choosedTheme}
+								</Text>
+								<Pressable
+									style={styles.editIcon}
+									onPress={() => setIsAwaitChoice(true)}
+								>
+									{({ pressed }) => (
+										<Image
+											source={
+												pressed
+													? require('@assets/edit_icon_clicked.png')
+													: require('@assets/edit_icon.png')
+											}
+										/>
+									)}
+								</Pressable>
+							</ImageBackground>
+						)}
+					</View>
+
+					{/* Секция игрового стола */}
+					<View style={styles.tableContainer}>
+						<ImageBackground
+							source={require('@assets/table.png')}
+							resizeMode='cover'
+							style={styles.tableImage}
+						>
+							<View style={styles.opponentCardsContainer}>
+								{opponentCards.map((card, index) => (
+									<AnimatedCard
+										key={`${card.value}_${card.suit}_${index}`}
+										style={
+											index % 2 === 0
+												? { marginRight: -20 }
+												: { marginRight: -20, marginTop: -5 }
+										}
+										source={CARD_SUIT_PATH}
+									/>
+								))}
+							</View>
+
+							<View style={styles.tableCard}>
+								<Image source={CARD_SUIT_PATH} />
+							</View>
+
+							<View style={styles.dealerCardsContainer}>
+								<RenderCards cards={dealerCards} style={{ marginRight: 0 }} />
+							</View>
+
+							<View
+								style={[
+									styles.playerCardsContainer,
+									secondHandCards.length > 0 && activeHandIndex === 0
+										? {
+												left: width * 0.1,
+												borderWidth: 2,
+												borderColor: '#FFD700',
+												borderRadius: 8,
+												padding: 5,
+										  }
+										: activeHandIndex === 1
+										? { left: width * 0.1 }
+										: null,
+								]}
+							>
+								<RenderCards cards={playerCards} />
+							</View>
+
+							{/* Дополнительные карты */}
+							{secondHandCards.length > 0 && (
+								<View
+									style={[
+										styles.playerCardsContainer,
+										{ left: width * 0.6 },
+										activeHandIndex === 1
+											? {
+													borderWidth: 2,
+													borderColor: '#FFD700',
+													borderRadius: 8,
+													padding: 5,
+											  }
+											: null,
+									]}
+								>
+									<RenderCards cards={secondHandCards} />
+								</View>
+							)}
+						</ImageBackground>
+					</View>
+
+					{/* Секция кнопок действий */}
+					<View style={styles.actionButtonsContainer}>
+						<ActionButton
+							disable={isInteractionLocked}
+							image={actionButtonsPaths.regular}
+							clicked={actionButtonsPaths.clicked}
+							onPress={() => handlePress('HIT')}
+							title='HIT'
+							textStyle={TYPOGRAPHY.H29}
+						/>
+						<ActionButton
+							disable={isInteractionLocked || playerCards.length === 0}
+							image={actionButtonsPaths.regular}
+							clicked={actionButtonsPaths.clicked}
+							onPress={() => {
+								handlePress('STAND')
+							}}
+							title='STAND'
+							textStyle={TYPOGRAPHY.H29}
+						/>
+						<ActionButton
+							disable={isInteractionLocked || playerCards.length === 0}
+							image={actionButtonsPaths.regular}
+							clicked={actionButtonsPaths.clicked}
+							onPress={() => handlePress('DOUBLE')}
+							title='DOUBLE'
+							textStyle={TYPOGRAPHY.H29}
+						/>
+						<ActionButton
+							disable={isInteractionLocked || playerCards.length === 0}
+							image={actionButtonsPaths.regular}
+							clicked={actionButtonsPaths.clicked}
+							onPress={() => handlePress('SPLIT')}
+							title='SPLIT'
+							textStyle={TYPOGRAPHY.H29}
+						/>
+					</View>
+
+					{/* Секция с результатами */}
+					{resultMessage && (
+						<View
+							style={{
+								position: 'absolute',
+								bottom: height * 0.1,
+								alignItems: 'center',
+								width,
+							}}
+						>
+							<Text
+								style={[
+									TYPOGRAPHY.H24,
+									{ color: '#FFD700', textAlign: 'center' },
+								]}
+							>
+								{resultMessage}
+							</Text>
+						</View>
+					)}
+
+					{/* Секция с кнопкой сброса */}
+					<View style={styles.primaryButtonContainer}>
 						<Pressable
-							style={styles.editIcon}
-							onPress={() => setIsAwaitChoice(true)}
+							disabled={isDealerTurn}
+							style={
+								isDealerTurn
+									? [styles.primaryButton, { opacity: 0.5 }]
+									: styles.primaryButton
+							}
+							onPress={() => resetGame()}
 						>
 							{({ pressed }) => (
-								<Image
-									source={
-										pressed
-											? require('@assets/edit_icon_clicked.png')
-											: require('@assets/edit_icon.png')
-									}
-								/>
+								<>
+									<ImageBackground
+										style={styles.startBtn}
+										resizeMode='contain'
+										source={
+											pressed
+												? require('@assets/buttons/button_s_clicked.png')
+												: require('@assets/buttons/button_s.png')
+										}
+									>
+										<Text style={TYPOGRAPHY.H34}>Try again</Text>
+									</ImageBackground>
+								</>
 							)}
 						</Pressable>
-					</ImageBackground>
-				)}
-			</View>
-
-			{/* Секция игрового стола */}
-			<View style={styles.tableContainer}>
-				<ImageBackground
-					source={require('@assets/table.png')}
-					style={styles.tableImage}
-				></ImageBackground>
-				<View style={styles.opponentCardsContainer}>
-					{opponentCards.map((card, index) => (
-						<AnimatedCard
-							key={`${card.value}_${card.suit}_${index}`}
-							style={
-								index % 2 === 0
-									? { marginRight: -20 }
-									: { marginRight: -20, marginTop: -5 }
-							}
-							source={CARD_SUIT_PATH}
-						/>
-					))}
-				</View>
-
-				<View style={styles.tableCard}>
-					<Image source={CARD_SUIT_PATH} />
-				</View>
-
-				<View style={styles.dealerCardsContainer}>
-					<RenderCards cards={dealerCards} style={{ marginRight: 0 }} />
-				</View>
-
-				<View
-					style={[
-						styles.playerCardsContainer,
-						secondHandCards.length > 0 && activeHandIndex === 0
-							? {
-									left: width * 0.1,
-									borderWidth: 2,
-									borderColor: '#FFD700',
-									borderRadius: 8,
-									padding: 5,
-							  }
-							: activeHandIndex === 1
-							? { left: width * 0.1 }
-							: null,
-					]}
-				>
-					<RenderCards cards={playerCards} />
-				</View>
-
-				{/* Дополнительные карты */}
-				{secondHandCards.length > 0 && (
-					<View
-						style={[
-							styles.playerCardsContainer,
-							{ left: width * 0.6 },
-							activeHandIndex === 1
-								? {
-										borderWidth: 2,
-										borderColor: '#FFD700',
-										borderRadius: 8,
-										padding: 5,
-								  }
-								: null,
-						]}
-					>
-						<RenderCards cards={secondHandCards} />
 					</View>
-				)}
-			</View>
-
-			{/* Секция кнопок действий */}
-			<View style={styles.actionButtonsContainer}>
-				<ActionButton
-					disable={isInteractionLocked}
-					image={actionButtonsPaths.regular}
-					clicked={actionButtonsPaths.clicked}
-					onPress={() => handlePress('HIT')}
-					title='HIT'
-					textStyle={TYPOGRAPHY.H29}
-				/>
-				<ActionButton
-					disable={isInteractionLocked || playerCards.length === 0}
-					image={actionButtonsPaths.regular}
-					clicked={actionButtonsPaths.clicked}
-					onPress={() => {
-						handlePress('STAND')
-					}}
-					title='STAND'
-					textStyle={TYPOGRAPHY.H29}
-				/>
-				<ActionButton
-					disable={isInteractionLocked || playerCards.length === 0}
-					image={actionButtonsPaths.regular}
-					clicked={actionButtonsPaths.clicked}
-					onPress={() => handlePress('DOUBLE')}
-					title='DOUBLE'
-					textStyle={TYPOGRAPHY.H29}
-				/>
-				<ActionButton
-					disable={isInteractionLocked || playerCards.length === 0}
-					image={actionButtonsPaths.regular}
-					clicked={actionButtonsPaths.clicked}
-					onPress={() => handlePress('SPLIT')}
-					title='SPLIT'
-					textStyle={TYPOGRAPHY.H29}
-				/>
-			</View>
-
-			{/* Секция с результатами */}
-			{resultMessage && (
-				<View
-					style={{
-						position: 'absolute',
-						bottom: 120,
-						alignItems: 'center',
-						width,
-					}}
-				>
-					<Text
-						style={[TYPOGRAPHY.H24, { color: '#FFD700', textAlign: 'center' }]}
-					>
-						{resultMessage}
-					</Text>
 				</View>
-			)}
-
-			{/* Секция с кнопкой сброса */}
-			<View style={styles.primaryButtonContainer}>
-				<Pressable
-					disabled={isDealerTurn}
-					style={
-						isDealerTurn
-							? [styles.primaryButton, { opacity: 0.5 }]
-							: styles.primaryButton
-					}
-					onPress={() => resetGame()}
-				>
-					{({ pressed }) => (
-						<>
-							<Image
-								source={
-									pressed
-										? require('@assets/buttons/button_s_clicked.png')
-										: require('@assets/buttons/button_s.png')
-								}
-							/>
-							<Text style={[TYPOGRAPHY.H34, styles.startBtn]}>Try again</Text>
-						</>
-					)}
-				</Pressable>
-			</View>
-		</View>
+			</SafeAreaView>
+		</ImageBackground>
 	)
 }
 
@@ -463,7 +490,6 @@ const styles = StyleSheet.create({
 	header: {
 		alignItems: 'flex-start',
 		paddingHorizontal: 20,
-		marginTop: height * 0.06,
 	},
 	headerText: {
 		alignItems: 'center',
@@ -492,7 +518,7 @@ const styles = StyleSheet.create({
 	},
 	tableContainer: {
 		position: 'absolute',
-		top: height * 0.33,
+		top: height * 0.25,
 		zIndex: 0,
 	},
 	tableImage: {
@@ -531,11 +557,11 @@ const styles = StyleSheet.create({
 		width: width,
 		flexDirection: 'row',
 		justifyContent: 'space-around',
-		bottom: 180,
+		bottom: height * 0.17,
 	},
 	primaryButtonContainer: {
 		position: 'absolute',
-		bottom: 50,
+		bottom: height * 0.01,
 		width: width,
 		alignItems: 'center',
 	},
@@ -544,15 +570,13 @@ const styles = StyleSheet.create({
 		position: 'relative',
 	},
 	startBtn: {
-		position: 'absolute',
-		top: 20,
+		width: width,
+		height: 65,
+		alignItems: 'center',
+		justifyContent: 'center',
 	},
 	backgroundImage: {
-		position: 'absolute',
-		top: 0,
-		left: 0,
-		right: 0,
-		bottom: 0,
+		flex: 1,
 	},
 })
 

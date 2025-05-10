@@ -12,7 +12,6 @@ export const updateUserProfile = async (
 	updates: Partial<UserProfile>
 ): Promise<UserProfile> => {
 	let userProfile: UserProfile
-	console.log('updates', updates)
 	try {
 		const storedProfile = await AsyncStorage.getItem('userProfile')
 		if (storedProfile) {

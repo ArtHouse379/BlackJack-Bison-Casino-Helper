@@ -13,6 +13,7 @@ import {
 	TouchableOpacity,
 	View,
 } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const { width, height } = Dimensions.get('window')
 
@@ -20,128 +21,155 @@ const MainMenuScreen: React.FC = () => {
 	const navigation = useNavigation()
 
 	return (
-		<View style={styles.container}>
-			<ImageBackground
-				source={require('@assets/main_bg.png')}
-				style={styles.background}
-				resizeMode='cover'
-			/>
+		<ImageBackground
+			source={require('@assets/main_bg.png')}
+			style={styles.background}
+			resizeMode='cover'
+		>
+			<SafeAreaView edges={['top', 'bottom']} style={{ flex: 1 }}>
+				<View style={styles.container}>
+					<View style={styles.header}>
+						<ProfileButton />
 
-			<View style={styles.header}>
-				<ProfileButton />
+						<SettingsButton />
+					</View>
 
-				<SettingsButton />
-			</View>
+					<View style={styles.buttonsContainer}>
+						<View style={[styles.btnContainer, { marginRight: 24 }]}>
+							<TouchableOpacity
+								onPress={() => {
+									navigation.navigate('StrategyGuide' as never)
+								}}
+							>
+								<Image
+									style={styles.btnImage}
+									resizeMode='contain'
+									source={require('@assets/menu_cards/strategy.png')}
+								/>
+								<Text style={[TYPOGRAPHY.H5, styles.buttonText]}>
+									BLACKJACK STRATEGY GUIDE
+								</Text>
+							</TouchableOpacity>
+						</View>
+						<View style={styles.btnContainer}>
+							<TouchableOpacity
+								onPress={() => {
+									navigation.navigate('HandDecision' as never)
+								}}
+							>
+								<Image
+									style={styles.btnImage}
+									resizeMode='contain'
+									source={require('@assets/menu_cards/calc.png')}
+								/>
+								<Text style={[TYPOGRAPHY.H5, styles.buttonText]}>
+									HAND CALCULATOR
+								</Text>
+							</TouchableOpacity>
+						</View>
+						<View style={[styles.btnContainer, { marginRight: 24 }]}>
+							<TouchableOpacity
+								onPress={() => {
+									navigation.navigate('Statistics' as never)
+								}}
+							>
+								<Image
+									style={styles.btnImage}
+									resizeMode='contain'
+									source={require('@assets/menu_cards/statistic.png')}
+								/>
+								<Text style={[TYPOGRAPHY.H5, styles.buttonText]}>
+									PROGRESS & STATISTICS
+								</Text>
+							</TouchableOpacity>
+						</View>
+						<View style={styles.btnContainer}>
+							<TouchableOpacity
+								onPress={() => {
+									navigation.navigate('HandSimulator' as never)
+								}}
+							>
+								<Image
+									style={styles.btnImage}
+									resizeMode='contain'
+									source={require('@assets/menu_cards/simulator.png')}
+								/>
+								<Text style={[TYPOGRAPHY.H5, styles.buttonText]}>
+									HAND SIMULATOR
+								</Text>
+							</TouchableOpacity>
+						</View>
+					</View>
 
-			<View style={styles.buttonsContainer}>
-				<TouchableOpacity
-					style={styles.button}
-					onPress={() => {
-						navigation.navigate('StrategyGuide' as never)
-					}}
-				>
-					<Image source={require('@assets/menu_cards/strategy.png')} />
-					<Text style={[TYPOGRAPHY.H5, styles.buttonText]}>
-						BLACKJACK STRATEGY GUIDE
-					</Text>
-				</TouchableOpacity>
-
-				<TouchableOpacity
-					style={styles.button}
-					onPress={() => {
-						navigation.navigate('HandDecision' as never)
-					}}
-				>
-					<Image source={require('@assets/menu_cards/calc.png')} />
-					<Text style={[TYPOGRAPHY.H5, styles.buttonText]}>
-						HAND CALCULATOR
-					</Text>
-				</TouchableOpacity>
-
-				<TouchableOpacity
-					style={styles.button}
-					onPress={() => {
-						navigation.navigate('Statistics' as never)
-					}}
-				>
-					<Image source={require('@assets/menu_cards/statistic.png')} />
-					<Text style={[TYPOGRAPHY.H5, styles.buttonText]}>
-						PROGRESS & STATISTICS
-					</Text>
-				</TouchableOpacity>
-
-				<TouchableOpacity
-					style={styles.button}
-					onPress={() => {
-						navigation.navigate('HandSimulator' as never)
-					}}
-				>
-					<Image source={require('@assets/menu_cards/simulator.png')} />
-					<Text style={[TYPOGRAPHY.H5, styles.buttonText]}>HAND SIMULATOR</Text>
-				</TouchableOpacity>
-			</View>
-
-			<View style={styles.actionContainer}>
-				<Pressable
-					style={styles.primaryButton}
-					onPress={() => {
-						navigation.navigate('MainMenu' as never)
-					}}
-				>
-					{({ pressed }) => (
-						<Image
-							source={
-								pressed
-									? require('@assets/buttons/button_xl_clicked.png')
-									: require('@assets/buttons/button_xl.png')
-							}
-						/>
-					)}
-				</Pressable>
-				<Text disabled style={[TYPOGRAPHY.H31, styles.startBtn]}>
-					Start Learning
-				</Text>
-			</View>
-		</View>
+					<View style={styles.actionContainer}>
+						<Pressable
+							style={styles.primaryButton}
+							onPress={() => {
+								navigation.navigate('MainMenu' as never)
+							}}
+						>
+							{({ pressed }) => (
+								<>
+									<Image
+										resizeMode='contain'
+										source={
+											pressed
+												? require('@assets/buttons/button_xl_clicked.png')
+												: require('@assets/buttons/button_xl.png')
+										}
+									/>
+									<Text style={[TYPOGRAPHY.H31, styles.startBtn]}>
+										Start Learning
+									</Text>
+								</>
+							)}
+						</Pressable>
+					</View>
+				</View>
+			</SafeAreaView>
+		</ImageBackground>
 	)
 }
 
 const styles = StyleSheet.create({
-	container: {
-		paddingHorizontal: 30,
-		paddingVertical: height * 0.07,
+	background: {
 		flex: 1,
+	},
+	container: {
+		flex: 1,
+		paddingHorizontal: 30,
 		alignItems: 'center',
-		backgroundColor: '#f5f5f5',
+		justifyContent: 'space-between',
 		position: 'relative',
 	},
 	header: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		width: '100%',
-		marginBottom: height * 0.1,
 	},
 	buttonsContainer: {
-		marginBottom: height * 0.2,
 		flexDirection: 'row',
 		flexWrap: 'wrap',
-		justifyContent: 'space-between',
-		rowGap: 24,
+		marginTop: height * 0.05,
 	},
-	button: {
-		width: width * 0.4,
-		aspectRatio: 1,
+	btnContainer: {
+		width: (width - 30 * 2 - 24) / 2,
+		marginBottom: 24,
 		position: 'relative',
+	},
+	btnImage: {
+		width: '100%',
 	},
 	buttonText: {
 		position: 'absolute',
-		width: 155,
-		bottom: height * 0.012,
-		left: 10,
+		width: '90%',
+		bottom: height * 0.015,
+		left: '5%',
 		textAlign: 'center',
 	},
 	actionContainer: {
 		alignItems: 'center',
+		marginVertical: height * 0.08,
 	},
 	primaryButton: {
 		alignItems: 'center',
@@ -150,14 +178,6 @@ const styles = StyleSheet.create({
 	startBtn: {
 		position: 'absolute',
 		top: 25,
-	},
-	background: {
-		position: 'absolute',
-		top: 0,
-		left: 0,
-		right: 0,
-		bottom: 0,
-		opacity: 1,
 	},
 })
 

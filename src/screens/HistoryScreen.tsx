@@ -1,5 +1,6 @@
 import BackButton from '@/components/buttons/BackButton'
 import { TYPOGRAPHY } from '@/constants/typography'
+import { useNavigation } from '@react-navigation/native'
 import React from 'react'
 import {
 	Dimensions,
@@ -10,118 +11,118 @@ import {
 	Text,
 	View,
 } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const { width, height } = Dimensions.get('window')
 
 const HistoryScreen: React.FC = () => {
 	const [analysisType, setAnalysisType] = React.useState('ANALYSIS TYPE')
+	const navigation = useNavigation()
 
 	const handleFullReport = () => {
-		// TODO: обработчик перехода к полному отчету
+		navigation.navigate('Premium' as never)
 	}
 
 	return (
-		<View style={styles.container}>
-			<ImageBackground
-				source={require('@assets/main_bg.png')}
-				style={styles.background}
-			/>
+		<ImageBackground
+			source={require('@assets/main_bg.png')}
+			style={styles.background}
+		>
+			<SafeAreaView edges={['top', 'bottom']} style={{ flex: 1 }}>
+				<View style={styles.container}>
+					{/* Кнопка назад и заголовок */}
+					<View style={styles.header}>
+						<BackButton />
 
-			{/* Кнопка назад и заголовок */}
-			<View style={styles.header}>
-				<BackButton />
-
-				<Text
-					style={[TYPOGRAPHY.H2, { width: width * 0.6, textAlign: 'center' }]}
-				>
-					Hand History
-				</Text>
-			</View>
-
-			{/* Выпадающий список выбора анализа */}
-			<View style={styles.dropdownContainer}>
-				<View>
-					<ImageBackground
-						source={require('@assets/history_page/history_theme_banner.png')}
-						resizeMode='cover'
-						style={styles.dropdown}
-					>
-						<Text style={TYPOGRAPHY.H5}>{analysisType}</Text>
 						<Image
-							source={require('@assets/search_icon.png')}
-							style={styles.searchIcon}
+							source={require('@assets/page_headers/hand_history_header.png')}
+							resizeMode='contain'
+							style={{ width: width * 0.6 }}
 						/>
-					</ImageBackground>
-				</View>
-			</View>
+					</View>
 
-			{/* Карточки истории */}
-			<View style={styles.cardsContainer}>
-				<View style={styles.card}>
-					<Text style={[styles.cardTitle, TYPOGRAPHY.H27]}>
-						PLAYED BLACKJACK HAND
-					</Text>
-					<Text style={[styles.cardSubtitle, TYPOGRAPHY.H28]}>
-						ANALYSIS AVAILABLE
-					</Text>
-				</View>
-				<View style={styles.card}>
-					<Text style={[styles.cardTitle, TYPOGRAPHY.H27]}>
-						DOUBLED DOWN ON 11
-					</Text>
-					<Text style={[styles.cardSubtitle, TYPOGRAPHY.H28]}>
-						CORRECT MOVE!
-					</Text>
-				</View>
-			</View>
+					{/* Выпадающий список выбора анализа */}
+					<View style={styles.dropdownContainer}>
+						<View>
+							<ImageBackground
+								source={require('@assets/history_page/history_theme_banner.png')}
+								resizeMode='contain'
+								style={styles.dropdown}
+							>
+								<Text style={TYPOGRAPHY.H5}>{analysisType}</Text>
+								<Image
+									source={require('@assets/search_icon.png')}
+									style={styles.searchIcon}
+								/>
+							</ImageBackground>
+						</View>
+					</View>
 
-			{/* Кнопка полного отчета */}
-			<View style={styles.fullReportContainer}>
-				<Pressable style={styles.primaryButton}>
-					{({ pressed }) => (
-						<ImageBackground
-							style={styles.buttonBgImage}
-							resizeMode='cover'
-							source={
-								pressed
-									? require('@assets/buttons/history_report_clicked.png')
-									: require('@assets/buttons/history_report.png')
-							}
-						>
-							<Text style={[TYPOGRAPHY.H33]}>VIEW FULL REPORT</Text>
-						</ImageBackground>
-					)}
-				</Pressable>
-			</View>
-		</View>
+					{/* Карточки истории */}
+					<View style={styles.cardsContainer}>
+						<View style={styles.card}>
+							<Text style={[styles.cardTitle, TYPOGRAPHY.H27]}>
+								PLAYED BLACKJACK HAND
+							</Text>
+							<Text style={[styles.cardSubtitle, TYPOGRAPHY.H28]}>
+								ANALYSIS AVAILABLE
+							</Text>
+						</View>
+						<View style={styles.card}>
+							<Text style={[styles.cardTitle, TYPOGRAPHY.H27]}>
+								DOUBLED DOWN ON 11
+							</Text>
+							<Text style={[styles.cardSubtitle, TYPOGRAPHY.H28]}>
+								CORRECT MOVE!
+							</Text>
+						</View>
+					</View>
+
+					{/* Кнопка полного отчета */}
+					<View style={styles.fullReportContainer}>
+						<Pressable style={styles.primaryButton} onPress={handleFullReport}>
+							{({ pressed }) => (
+								<ImageBackground
+									style={styles.buttonBgImage}
+									resizeMode='contain'
+									source={
+										pressed
+											? require('@assets/buttons/history_report_clicked.png')
+											: require('@assets/buttons/history_report.png')
+									}
+								>
+									<Text style={[TYPOGRAPHY.H33]}>VIEW FULL REPORT</Text>
+								</ImageBackground>
+							)}
+						</Pressable>
+					</View>
+				</View>
+			</SafeAreaView>
+		</ImageBackground>
 	)
 }
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
+		paddingHorizontal: 20,
 	},
 	background: {
-		position: 'absolute',
-		top: 0,
-		left: 0,
-		right: 0,
-		bottom: 0,
-		width: '100%',
-		height: '100%',
+		flex: 1,
 	},
 	header: {
+		width: width,
 		flexDirection: 'row',
 		alignItems: 'center',
-		marginTop: height * 0.06,
-		paddingHorizontal: 20,
 	},
 	headerText: {
 		alignItems: 'center',
-		marginTop: -40,
 	},
 	dropdownContainer: {
+		width: width,
+		alignSelf: 'center',
 		alignItems: 'center',
+		justifyContent: 'center',
 		marginTop: height * 0.01,
 	},
 	dropdown: {
@@ -129,12 +130,12 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'center',
-		width: width * 0.61,
+		width: width,
 		height: 48,
 	},
 	searchIcon: {
 		position: 'absolute',
-		right: 15,
+		right: width * 0.25,
 		top: 10,
 		tintColor: '#fff',
 	},
@@ -166,7 +167,8 @@ const styles = StyleSheet.create({
 	},
 	fullReportContainer: {
 		position: 'absolute',
-		bottom: width * 0.4,
+		alignSelf: 'center',
+		bottom: height * 0.05,
 		width: '100%',
 		alignItems: 'center',
 	},
@@ -175,11 +177,10 @@ const styles = StyleSheet.create({
 		position: 'relative',
 	},
 	buttonBgImage: {
-		width: width * 0.63,
+		width: width,
 		height: 72,
 		alignItems: 'center',
 		justifyContent: 'center',
-		position: 'absolute',
 	},
 })
 

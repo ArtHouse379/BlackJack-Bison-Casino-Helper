@@ -8,7 +8,6 @@ export const saveSimulationToUserProfile = async (
 	try {
 		const userProfile = await getUserProfile()
 		const currentHistory = userProfile?.simulationsHistory || []
-		console.log('update simulator history')
 
 		await updateUserProfile({
 			simulationsHistory: [...currentHistory, simulationResult],

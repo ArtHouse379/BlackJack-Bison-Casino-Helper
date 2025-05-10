@@ -14,6 +14,7 @@ import {
 	TouchableOpacity,
 	View,
 } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const { width, height } = Dimensions.get('window')
 
@@ -62,91 +63,94 @@ const WelcomeScreen: React.FC = () => {
 	}, [])
 
 	return (
-		<View style={styles.container}>
-			<ImageBackground
-				source={backgroundImages[currentScreenIndx]}
-				style={styles.background}
-				resizeMode='cover'
-			/>
-			<StatusBar style='light' />
+		<ImageBackground
+			source={backgroundImages[currentScreenIndx]}
+			style={styles.background}
+			resizeMode='contain'
+		>
+			<SafeAreaView edges={['top', 'bottom']} style={{ flex: 1 }}>
+				<View style={styles.container}>
+					<StatusBar style='light' />
 
-			<View style={styles.content}>
-				<View style={styles.header}>
-					<Text style={TYPOGRAPHY.H1}>Play smart. Win more.</Text>
-					<Image
-						source={require('@assets/logo.png')}
-						resizeMode='center'
-						style={styles.headerImage}
-					/>
-				</View>
+					<View style={styles.content}>
+						<View style={styles.header}>
+							<Text style={TYPOGRAPHY.H1}>Play smart. Win more.</Text>
+							<Image
+								source={require('@assets/logo.png')}
+								resizeMode='center'
+								style={styles.headerImage}
+							/>
+						</View>
 
-				<View
-					style={[
-						styles.middleTextContainer,
-						bannerStyles[currentScreenIndx as keyof typeof bannerStyles],
-					]}
-				>
-					{/* <Text style={[TYPOGRAPHY.H3, { textAlign: 'center' }]}>
+						<View
+							style={[
+								styles.middleTextContainer,
+								bannerStyles[currentScreenIndx as keyof typeof bannerStyles],
+							]}
+						>
+							{/* <Text style={[TYPOGRAPHY.H3, { textAlign: 'center' }]}>
 						Master Blackjack strategies and maximize your wins!
 					</Text> */}
-					<Text
-						style={[
-							TYPOGRAPHY.H3,
-							{ textAlign: 'center', maxWidth: 330, alignSelf: 'center' },
-						]}
-					>
-						{textBanners[currentScreenIndx]}
-					</Text>
-				</View>
+							<Text
+								style={[
+									TYPOGRAPHY.H3,
+									{ textAlign: 'center', maxWidth: 330, alignSelf: 'center' },
+								]}
+							>
+								{textBanners[currentScreenIndx]}
+							</Text>
+						</View>
 
-				<View style={styles.actionContainer}>
-					<Pressable
-						style={styles.primaryButton}
-						onPress={() => {
-							navigation.navigate('StrategyGuide' as never)
-						}}
-					>
-						{({ pressed }) => (
-							<>
-								<Image
-									source={
-										pressed
-											? require('../../assets/buttons/button_xl_clicked.png')
-											: require('../../assets/buttons/button_xl.png')
-									}
-								/>
-								<Text style={[TYPOGRAPHY.H31, styles.startBtn]}>
-									Start Learning
-								</Text>
-							</>
-						)}
-					</Pressable>
-				</View>
+						<View style={styles.actionContainer}>
+							<Pressable
+								style={styles.primaryButton}
+								onPress={() => {
+									navigation.navigate('StrategyGuide' as never)
+								}}
+							>
+								{({ pressed }) => (
+									<>
+										<Image
+											source={
+												pressed
+													? require('../../assets/buttons/button_xl_clicked.png')
+													: require('../../assets/buttons/button_xl.png')
+											}
+										/>
+										<Text style={[TYPOGRAPHY.H31, styles.startBtn]}>
+											Start Learning
+										</Text>
+									</>
+								)}
+							</Pressable>
+						</View>
 
-				<View style={styles.bottomFlat}>
-					<TouchableOpacity
-						style={styles.secondaryButton}
-						onPress={() => {
-							setCurrentBgImageIndx(0)
-							navigation.navigate('MainMenu' as never)
-						}}
-					>
-						<Text style={TYPOGRAPHY.H4}>Skip</Text>
-					</TouchableOpacity>
-					<TouchableOpacity
-						style={styles.secondaryButton}
-						onPress={() => {
-							if (currentScreenIndx >= 3) {
-								setCurrentBgImageIndx(0)
-								navigation.navigate('MainMenu' as never)
-							} else setCurrentBgImageIndx(currentScreenIndx + 1)
-						}}
-					>
-						<Text style={TYPOGRAPHY.H4}>Next</Text>
-					</TouchableOpacity>
+						<View style={styles.bottomFlat}>
+							<TouchableOpacity
+								style={styles.secondaryButton}
+								onPress={() => {
+									setCurrentBgImageIndx(0)
+									navigation.navigate('MainMenu' as never)
+								}}
+							>
+								<Text style={TYPOGRAPHY.H4}>Skip</Text>
+							</TouchableOpacity>
+							<TouchableOpacity
+								style={styles.secondaryButton}
+								onPress={() => {
+									if (currentScreenIndx >= 3) {
+										setCurrentBgImageIndx(0)
+										navigation.navigate('MainMenu' as never)
+									} else setCurrentBgImageIndx(currentScreenIndx + 1)
+								}}
+							>
+								<Text style={TYPOGRAPHY.H4}>Next</Text>
+							</TouchableOpacity>
+						</View>
+					</View>
 				</View>
-			</View>
-		</View>
+			</SafeAreaView>
+		</ImageBackground>
 	)
 }
 
@@ -157,8 +161,7 @@ const styles = StyleSheet.create({
 	content: {
 		flex: 1,
 		justifyContent: 'space-between',
-		paddingVertical: height * 0.06,
-		paddingHorizontal: 45,
+		paddingHorizontal: width * 0.1,
 	},
 	header: {
 		alignItems: 'center',
@@ -192,12 +195,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 	},
 	background: {
-		position: 'absolute',
-		top: 0,
-		left: 0,
-		right: 0,
-		bottom: 0,
-		opacity: 1,
+		flex: 1,
 	},
 })
 

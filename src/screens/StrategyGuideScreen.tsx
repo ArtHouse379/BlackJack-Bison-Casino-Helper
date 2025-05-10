@@ -1,16 +1,16 @@
+import BackButton from '@/components/buttons/BackButton'
+import StrategyThemesNavButton from '@/components/buttons/StrategyThemesNav'
+import StrategyGuidesList from '@/components/lists/StrategyGuidesList'
+import { TEXTS } from '@/constants/texts'
 import React from 'react'
 import {
 	Dimensions,
+	Image,
 	ImageBackground,
 	StyleSheet,
-	Text,
 	View,
 } from 'react-native'
-import BackButton from '../components/buttons/BackButton'
-import StrategyThemesNavButton from '../components/buttons/StrategyThemesNav'
-import StrategyGuidesList from '../components/lists/StrategyGuidesList'
-import { TEXTS } from '../constants/texts'
-import { TYPOGRAPHY } from '../constants/typography'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const themesList = [
 	'Advanced tactics',
@@ -25,48 +25,46 @@ const StrategyGuideScreen: React.FC = () => {
 	const guidesText = TEXTS
 
 	return (
-		<View style={styles.container}>
-			<ImageBackground
-				source={require('../../assets/main_bg.png')}
-				style={styles.background}
-			/>
-			{/* Кнопка назад */}
-			<View style={styles.header}>
-				<BackButton />
-			</View>
+		<ImageBackground
+			source={require('@assets/main_bg.png')}
+			style={styles.background}
+		>
+			<SafeAreaView edges={['top', 'bottom']} style={{ flex: 1 }}>
+				<View style={styles.container}>
+					{/* Кнопка назад */}
+					<View style={styles.header}>
+						<BackButton />
+					</View>
 
-			{/* Заголовок страницы */}
-			<View style={styles.headerText}>
-				{/* <HeaderDecorator
-					text='STATISTICS & PROGRESS'
-					gradientColors={['#FF00FF', '#76BDFF']}
-					fontSize={28}
-				/> */}
-				<Text style={[styles.title, TYPOGRAPHY.H2]}>
-					BLACKJACK STRATEGY GUIDE
-				</Text>
-			</View>
+					{/* Заголовок страницы */}
+					<View style={styles.headerText}>
+						<Image
+							source={require('@assets/page_headers/strategy_guid_header.png')}
+							resizeMode='contain'
+							style={{ marginBottom: height * 0.02 }}
+						/>
+					</View>
 
-			<StrategyThemesNavButton
-				theme={currentTheme}
-				setCurrentTheme={setCurrentTheme}
-				themes={themesList}
-				index={themesList.findIndex(theme => theme === currentTheme)}
-			/>
+					<StrategyThemesNavButton
+						theme={currentTheme}
+						setCurrentTheme={setCurrentTheme}
+						themes={themesList}
+						index={themesList.findIndex(theme => theme === currentTheme)}
+					/>
 
-			<StrategyGuidesList
-				list={guidesText[currentTheme as keyof typeof guidesText]}
-			/>
-		</View>
+					<StrategyGuidesList
+						list={guidesText[currentTheme as keyof typeof guidesText]}
+					/>
+				</View>
+			</SafeAreaView>
+		</ImageBackground>
 	)
 }
 
 const styles = StyleSheet.create({
-	container: { flex: 1 },
+	container: { flex: 1, paddingHorizontal: 20 },
 	header: {
 		alignItems: 'flex-start',
-		paddingHorizontal: 20,
-		marginTop: height * 0.06,
 	},
 	headerText: {
 		alignItems: 'center',
@@ -78,12 +76,7 @@ const styles = StyleSheet.create({
 		marginBottom: 15,
 	},
 	background: {
-		position: 'absolute',
-		top: 0,
-		left: 0,
-		right: 0,
-		bottom: 0,
-		opacity: 1,
+		flex: 1,
 	},
 })
 

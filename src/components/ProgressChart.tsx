@@ -1,10 +1,20 @@
+import { TYPOGRAPHY } from '@/constants/typography'
+import DateTimePicker from '@react-native-community/datetimepicker'
 import React from 'react'
-import { Dimensions, Image, StyleSheet, Text, View } from 'react-native'
+import {
+	Dimensions,
+	Image,
+	Modal,
+	Platform,
+	StyleSheet,
+	Text,
+	TouchableOpacity,
+	View,
+} from 'react-native'
 import Svg, { Circle, Path, Line as SvgLine } from 'react-native-svg'
-import { TYPOGRAPHY } from '../constants/typography'
 
 interface ChartDataPoint {
-	x: string
+	x: string // дата в формате YYYY-MM-DDT00-00-00
 	y: number
 	color?: string
 }
@@ -12,159 +22,290 @@ interface ChartDataPoint {
 interface ProgressChartProps {
 	title: string
 	data: ChartDataPoint[]
-	dateRange: string
-	chartType: 'winLose' | 'strategy'
 }
 
 const { width } = Dimensions.get('window')
 
-const ProgressChart: React.FC<ProgressChartProps> = ({
-	title,
-	data,
-	dateRange,
-	chartType,
-}) => {
-	// Функция для создания пути SVG на основе данных
-	const createPath = (data: ChartDataPoint[]) => {
-		if (data.length === 0) return ''
+const ProgressChart: React.FC<ProgressChartProps> = ({ title, data }) => {
+	const [calendarVisible, setCalendarVisible] = React.useState<
+		'start' | 'end' | null
+	>(null)
+	const [startDate, setStartDate] = React.useState<Date | null>(() => {
+		const now = new Date()
+		now.setDate(now.getDate() - 5)
+		return now
+	})
+	const [endDate, setEndDate] = React.useState<Date>(new Date())
+	const [filteredData, setFilteredData] = React.useState<ChartDataPoint[]>(data)
 
-		const chartWidth = width * 0.8 - 40 // Ширина графика с учетом отступов
-		const chartHeight = 150 // Высота графика
-
-		// Находим минимальное и максимальное значения для масштабирования
-		const minY = Math.min(...data.map(d => d.y))
-		const maxY = Math.max(...data.map(d => d.y))
-		const range = maxY - minY || 1 // Избегаем деления на ноль
-
-		// Создаем точки для пути
-		const points = data.map((point, index) => {
-			const x = (index / (data.length - 1)) * chartWidth
-			const y = chartHeight - ((point.y - minY) / range) * chartHeight
-			return { x, y }
-		})
-
-		// Создаем SVG path
-		let path = `M ${points[0].x} ${points[0].y}`
-
-		// Добавляем кривую Безье для плавности
-		for (let i = 0; i < points.length - 1; i++) {
-			const current = points[i]
-			const next = points[i + 1]
-
-			// Контрольные точки для кривой Безье
-			const cp1x = current.x + (next.x - current.x) / 3
-			const cp1y = current.y
-			const cp2x = next.x - (next.x - current.x) / 3
-			const cp2y = next.y
-
-			path += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${next.x} ${next.y}`
+	React.useEffect(() => {
+		if (startDate && endDate) {
+			const startDay = startDate.toISOString().slice(0, 10)
+			const endDay = endDate.toISOString().slice(0, 10)
+			const filtered = data.filter(point => {
+				const pointDay = new Date(point.x).toISOString().slice(0, 10)
+				return pointDay >= startDay && pointDay <= endDay
+			})
+			setFilteredData(filtered.length > 0 ? filtered : [])
+		} else {
+			setFilteredData(data)
 		}
+	}, [startDate, endDate, data])
 
-		return path
+	const handleCalendarPress = (type: 'start' | 'end') => {
+		setCalendarVisible(type)
 	}
 
-	// Создаем точки для графика
-	const renderPoints = () => {
-		const chartWidth = width * 0.8 - 40
-		const chartHeight = 150
+	const handleDateChange = (event: any, date?: Date) => {
+		if (calendarVisible === 'start' && date) setStartDate(date)
+		if (calendarVisible === 'end' && date) setEndDate(date)
+		setCalendarVisible(null)
+	}
 
-		const minY = Math.min(...data.map(d => d.y))
-		const maxY = Math.max(...data.map(d => d.y))
-		const range = maxY - minY || 1
+	// YAxis: всегда 5 шагов, максимум 5 или больше, если есть значения больше 5
+	const getYAxisRange = (data: ChartDataPoint[]) => {
+		const maxYData = Math.max(0, ...data.map(d => d.y))
+		const maxY = maxYData > 5 ? Math.ceil(maxYData) : 5
+		return {
+			min: 0,
+			max: maxY,
+		}
+	}
 
+	const padding = 15
+	const chartWidth = width * 0.8 - 2 * padding
+	const chartHeight = 150 - 2 * padding
+	const yAxisSteps = 5 // всегда 5 шагов
+
+	const yRange = getYAxisRange(filteredData)
+	const yStep = (yRange.max - yRange.min) / yAxisSteps
+
+	const renderPoints = (data: ChartDataPoint[]) => {
+		if (data.length === 0) return null
 		return data.map((point, index) => {
-			const x = (index / (data.length - 1)) * chartWidth
-			const y = chartHeight - ((point.y - minY) / range) * chartHeight
-
-			const pointColor =
-				chartType === 'winLose'
-					? point.y > 0.5
-						? '#4CAF50'
-						: '#F44336'
-					: '#B39DDB'
-
-			return <Circle key={index} cx={x} cy={y} r={5} fill={pointColor} />
+			const x = padding + (index / Math.max(1, data.length - 1)) * chartWidth
+			const y =
+				padding +
+				((yRange.max - point.y) / Math.max(1, yRange.max - yRange.min)) *
+					chartHeight
+			return (
+				<React.Fragment key={index}>
+					<Circle cx={x} cy={y} r={12} fill={point.color || '#79FF48'} />
+					{/* Линии пересечения */}
+					<SvgLine
+						x1={x}
+						y1={y}
+						x2={x}
+						y2={padding + chartHeight}
+						stroke='#BDBDBD'
+						strokeDasharray='2,2'
+						strokeWidth={1}
+					/>
+					<SvgLine
+						x1={padding}
+						y1={y}
+						x2={x}
+						y2={y}
+						stroke='#BDBDBD'
+						strokeDasharray='2,2'
+						strokeWidth={1}
+					/>
+				</React.Fragment>
+			)
 		})
 	}
 
-	// Создаем горизонтальные линии сетки
 	const renderGrid = () => {
-		const chartHeight = 150
 		const lines = []
-
-		for (let i = 0; i <= 4; i++) {
-			const y = (i / 4) * chartHeight
+		for (let i = 0; i <= yAxisSteps; i++) {
+			const value = yRange.max - yStep * i
+			const y =
+				padding +
+				((yRange.max - value) / Math.max(1, yRange.max - yRange.min)) *
+					chartHeight
 			lines.push(
 				<SvgLine
 					key={i}
 					x1={0}
 					y1={y}
-					x2={width * 0.8 - 40}
+					x2={chartWidth}
 					y2={y}
 					stroke='#E0E0E0'
 					strokeWidth={1}
 				/>
 			)
 		}
-
 		return lines
 	}
 
-	// Создаем метки оси Y
-	const renderYLabels = () => {
-		const chartHeight = 150
-		const minY = Math.min(...data.map(d => d.y))
-		const maxY = Math.max(...data.map(d => d.y))
-		const range = maxY - minY || 1
-
+	const renderYLabels = (data: ChartDataPoint[]) => {
 		const labels = []
-
-		for (let i = 0; i <= 4; i++) {
-			const value = minY + (range * (4 - i)) / 4
-			const y = (i / 4) * chartHeight
-
+		for (let i = 0; i <= yAxisSteps; i++) {
+			const value = yRange.max - yStep * i
+			const y =
+				padding +
+				((yRange.max - value) / Math.max(1, yRange.max - yRange.min)) *
+					chartHeight
 			labels.push(
 				<Text key={i} style={[styles.yAxisLabel, { top: y - 10 }]}>
-					{value.toFixed(1)}
+					{Math.round(value)}
 				</Text>
 			)
 		}
-
 		return labels
 	}
 
-	const lineColor = chartType === 'winLose' ? '#8BC34A' : '#B39DDB'
-	const path = createPath(data)
+	const renderColoredSmoothPath = (data: ChartDataPoint[]) => {
+		if (data.length < 2) return null
+		const points = data.map((point, index) => {
+			const x = padding + (index / Math.max(1, data.length - 1)) * chartWidth
+			const y =
+				padding +
+				((yRange.max - point.y) / Math.max(1, yRange.max - yRange.min)) *
+					chartHeight
+			return { x, y }
+		})
+		const segments = []
+		for (let i = 0; i < points.length - 1; i++) {
+			const p0 = points[i]
+			const p1 = points[i + 1]
+			const cp1x = p0.x + (p1.x - p0.x) / 2
+			const cp1y = p0.y
+			const cp2x = p0.x + (p1.x - p0.x) / 2
+			const cp2y = p1.y
+			const color = p1.y < p0.y ? '#79FF48' : '#EF644C' // зелёный если вверх, красный если вниз
+			const d = `M ${p0.x} ${p0.y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p1.x} ${p1.y}`
+			segments.push(
+				<Path key={i} d={d} stroke={color} strokeWidth={4} fill='none' />
+			)
+		}
+		return segments
+	}
+
+	const getDatesInRange = (start: Date, end: Date) => {
+		const dates = []
+		const current = new Date(start)
+		while (current <= end) {
+			dates.push(new Date(current))
+			current.setDate(current.getDate() + 1)
+		}
+		return dates
+	}
+
+	// Хук для дополнения данных нулями по всем дням диапазона
+	const getFilledData = React.useCallback(() => {
+		if (!startDate || !endDate) return data
+		const dates = getDatesInRange(startDate, endDate)
+		return dates.map(date => {
+			const dayStr = date.toISOString().slice(0, 10)
+			const found = data.find(point => point.x.slice(0, 10) === dayStr)
+			return found ? found : { x: dayStr, y: 0, color: '#EF644C' }
+		})
+	}, [data, startDate, endDate])
+
+	React.useEffect(() => {
+		setFilteredData(getFilledData())
+	}, [startDate, endDate, data, getFilledData])
 
 	return (
 		<View style={styles.container}>
 			<View style={styles.header}>
 				<Text style={styles.title}>{title}</Text>
 				<View style={styles.dateContainer}>
-					<Text style={[TYPOGRAPHY.H19, styles.dateText]}>{dateRange}</Text>
-					<Image source={require('../../assets/icon_calendar.png')} />
+					<TouchableOpacity onPress={() => handleCalendarPress('start')}>
+						<Text style={[TYPOGRAPHY.H19, styles.dateText]}>
+							{startDate ? startDate.toLocaleDateString() : 'from ...'}
+						</Text>
+					</TouchableOpacity>
+					<Text style={{ marginHorizontal: 2 }}>-</Text>
+					<TouchableOpacity onPress={() => handleCalendarPress('end')}>
+						<Text style={[TYPOGRAPHY.H19, styles.dateText]}>
+							{endDate ? endDate.toLocaleDateString() : '... to'}
+						</Text>
+					</TouchableOpacity>
+					<Image
+						resizeMode='contain'
+						source={require('@assets/icon_calendar.png')}
+					/>
 				</View>
 			</View>
 
-			<View style={styles.chartContainer}>
-				<View style={styles.yAxisContainer}>{renderYLabels()}</View>
-
-				<View style={styles.chartArea}>
-					<Svg height={150} width={width * 0.8 - 40}>
-						{renderGrid()}
-						<Path d={path} stroke={lineColor} strokeWidth={3} fill='none' />
-						{renderPoints()}
-					</Svg>
-
-					<View style={styles.xAxisContainer}>
-						{data.map((item, index) => (
-							<Text key={index} style={styles.xAxisLabel}>
-								{item.x}
-							</Text>
-						))}
+			{filteredData.length === 0 ? (
+				<View
+					style={{
+						height: 150,
+						justifyContent: 'center',
+						alignItems: 'center',
+					}}
+				>
+					<Text style={{ color: '#888', fontSize: 16 }}>No data</Text>
+				</View>
+			) : (
+				<View style={styles.chartContainer}>
+					<View
+						style={[
+							styles.yAxisContainer,
+							{ height: chartHeight + 2 * padding },
+						]}
+					>
+						{renderYLabels(filteredData)}
+					</View>
+					<View style={styles.chartArea}>
+						<Svg
+							height={chartHeight + 2 * padding}
+							width={chartWidth + 2 * padding}
+						>
+							{renderGrid()}
+							{renderColoredSmoothPath(filteredData)}
+							{renderPoints(filteredData)}
+						</Svg>
+						<View style={styles.xAxisContainer}>
+							{(() => {
+								if (!startDate || !endDate) return null
+								const dates = getDatesInRange(startDate, endDate)
+								return dates.map((date, idx) => {
+									const day = date.getDate().toString().padStart(2, '0')
+									const month = (date.getMonth() + 1)
+										.toString()
+										.padStart(2, '0')
+									return (
+										<Text key={idx} style={styles.xAxisLabel}>
+											{day}.{month}
+										</Text>
+									)
+								})
+							})()}
+						</View>
 					</View>
 				</View>
-			</View>
+			)}
+			{calendarVisible && (
+				<Modal transparent visible={!!calendarVisible} animationType='fade'>
+					<View
+						style={{
+							flex: 1,
+							justifyContent: 'center',
+							alignItems: 'center',
+							backgroundColor: '#00000055',
+						}}
+					>
+						<View
+							style={{ backgroundColor: '#fff', borderRadius: 10, padding: 10 }}
+						>
+							<DateTimePicker
+								value={
+									calendarVisible === 'start'
+										? startDate || new Date()
+										: endDate || new Date()
+								}
+								mode='date'
+								display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+								onChange={handleDateChange}
+							/>
+						</View>
+					</View>
+				</Modal>
+			)}
 		</View>
 	)
 }
@@ -194,6 +335,7 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		fontWeight: 'bold',
 		color: '#0084FF',
+		maxWidth: 200,
 	},
 	dateContainer: {
 		flexDirection: 'row',
@@ -203,13 +345,11 @@ const styles = StyleSheet.create({
 		marginRight: 5,
 	},
 	chartContainer: {
-		height: 200,
 		flexDirection: 'row',
 		alignItems: 'center',
 	},
 	yAxisContainer: {
-		width: 40,
-		height: 150,
+		width: 15,
 		justifyContent: 'space-between',
 		position: 'relative',
 	},

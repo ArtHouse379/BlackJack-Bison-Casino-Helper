@@ -14,6 +14,7 @@ export interface User {
 	isPlaying: boolean
 	isAdmin: boolean
 	isInGame: boolean
+	isPremiumUser: boolean
 }
 
 export interface UserProfile extends User {

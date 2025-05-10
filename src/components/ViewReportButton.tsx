@@ -1,3 +1,4 @@
+import { TYPOGRAPHY } from '@/constants/typography'
 import React from 'react'
 import {
 	Dimensions,
@@ -7,7 +8,6 @@ import {
 	Text,
 	View,
 } from 'react-native'
-import { TYPOGRAPHY } from '../constants/typography'
 
 interface ViewReportButtonProps {
 	title: string
@@ -26,11 +26,11 @@ const ViewReportButton: React.FC<ViewReportButtonProps> = ({
 				{({ pressed }) => (
 					<ImageBackground
 						style={styles.buttonBgImage}
-						resizeMode='cover'
+						resizeMode='contain'
 						source={
 							pressed
-								? require('../../assets/buttons/button_2xl_clicked.png')
-								: require('../../assets/buttons/button_2xl.png')
+								? require('@assets/buttons/button_2xl_clicked.png')
+								: require('@assets/buttons/button_2xl.png')
 						}
 					>
 						<Text style={[TYPOGRAPHY.H31]}>{title}</Text>
@@ -44,20 +44,18 @@ const ViewReportButton: React.FC<ViewReportButtonProps> = ({
 const styles = StyleSheet.create({
 	container: {
 		alignSelf: 'center',
-		marginVertical: 20,
 		position: 'absolute',
-		bottom: 80,
+		bottom: 10,
 	},
 	primaryButton: {
 		alignItems: 'center',
 		position: 'relative',
 	},
 	buttonBgImage: {
-		width: width * 0.76,
+		width: width,
 		height: 90,
 		alignItems: 'center',
 		justifyContent: 'center',
-		position: 'absolute',
 	},
 })
 

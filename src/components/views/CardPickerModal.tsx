@@ -1,9 +1,10 @@
-import { CARD_VALUES } from '@/constants/cards'
+import { CARD_SUITS, CARD_VALUES } from '@/constants/cards'
 import { PlayingCardType } from '@/types/PlayingCard'
 import React from 'react'
 import {
 	Dimensions,
 	FlatList,
+	Image,
 	Modal,
 	Pressable,
 	StyleSheet,
@@ -28,7 +29,8 @@ const CardPickerModal: React.FC<CardPickerModalProps> = ({
 }) => {
 	const isUsed = (card: PlayingCardType) =>
 		usedCards.some(c => c.value === card.value && c.suit === card.suit)
-
+	const suitColor = (suit: string) =>
+		suit === 'hearts' || suit === 'diamonds' ? '#EF2929' : '#000000'
 	return (
 		<Modal transparent visible={visible} animationType='slide'>
 			<View style={styles.overlay}>
@@ -46,9 +48,15 @@ const CardPickerModal: React.FC<CardPickerModalProps> = ({
 									onClose()
 								}}
 							>
-								<Text>
-									{item.value} of {item.suit}
+								<Text
+									style={{ color: suitColor(item.suit), fontWeight: 'bold' }}
+								>
+									{item.value}
 								</Text>
+								<Image
+									source={CARD_SUITS[item.suit as keyof typeof CARD_SUITS]}
+									style={{ width: 20, height: 20 }}
+								/>
 							</Pressable>
 						)}
 					/>
@@ -73,9 +81,14 @@ const styles = StyleSheet.create({
 		padding: 20,
 	},
 	cardItem: {
-		padding: 10,
-		borderBottomWidth: 1,
-		borderBottomColor: '#ccc',
+		flexDirection: 'row',
+		columnGap: 10,
+		justifyContent: 'space-between',
+		padding: 6,
+		margin: 5,
+		borderRadius: 10,
+		borderWidth: 1,
+		borderColor: '#ccc',
 		alignSelf: 'center',
 	},
 })

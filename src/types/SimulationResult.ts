@@ -11,6 +11,7 @@ export interface SimulationResult {
 	createAt: string
 	playerCards: PlayingCardType[]
 	secondHand?: PlayingCardType[]
+	playerActionsEfficiency: boolean[]
 	opponentCars: PlayingCardType[]
 	dealerCards: PlayingCardType[]
 	selectedActions: ActionType[]
