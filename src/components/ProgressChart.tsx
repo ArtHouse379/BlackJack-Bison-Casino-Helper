@@ -185,10 +185,14 @@ const ProgressChart: React.FC<ProgressChartProps> = ({ title, data }) => {
 	const getDatesInRange = (start: Date, end: Date) => {
 		const dates = []
 		const current = new Date(start)
-		while (current <= end) {
+		while (
+			current.toISOString().slice(0, 10) <= end.toISOString().slice(0, 10)
+		) {
 			dates.push(new Date(current))
 			current.setDate(current.getDate() + 1)
 		}
+		console.log(dates)
+
 		return dates
 	}
 
