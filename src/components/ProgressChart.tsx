@@ -191,7 +191,6 @@ const ProgressChart: React.FC<ProgressChartProps> = ({ title, data }) => {
 			dates.push(new Date(current))
 			current.setDate(current.getDate() + 1)
 		}
-		console.log(dates)
 
 		return dates
 	}
