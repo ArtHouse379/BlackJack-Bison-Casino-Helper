@@ -27,7 +27,8 @@
 				"foregroundImage": "./assets/app_logo.png",
 				"backgroundColor": "#ffffff"
 			},
-			"package": "com.arthouse379.learnpockerapp"
+			"package": "com.arthouse379.learnpockerapp",
+			"permissions": ["INTERNET"]
 		},
 		"web": {
 			"favicon": "./assets/app_logo.png"

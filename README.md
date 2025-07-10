@@ -10,6 +10,11 @@
 - Просматривать статистику своих игр и анализировать эффективность решений.
 - Получать расширенные отчёты и дополнительные функции при покупке Premium.
 
+![screenshot](./assets/screenshots/screen_menu.png)
+![screenshot](./assets/screenshots/screen_strategy.png)
+![screenshot](./assets/screenshots/screen_calc.png)
+![screenshot](./assets/screenshots/screen_simulator.png)
+
 ## Основные функции
 
 - **Strategy Guide** — интерактивные гайды по стратегиям блэкджека (базовая стратегия, подсчёт карт, управление банкроллом и др.).
