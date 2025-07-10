@@ -10,10 +10,15 @@
 - Просматривать статистику своих игр и анализировать эффективность решений.
 - Получать расширенные отчёты и дополнительные функции при покупке Premium.
 
-![screenshot](./assets/screenshots/screen_menu.png)
-![screenshot](./assets/screenshots/screen_strategy.png)
-![screenshot](./assets/screenshots/screen_calc.png)
-![screenshot](./assets/screenshots/screen_simulator.png)
+<p align="center">
+  <img src="./assets/screenshots/screen_menu.png" width="45%" style="margin-right: 5px;">
+  <img src="./assets/screenshots/screen_strategy.png" width="45%">
+</p>
+
+<p align="center">
+  <img src="./assets/screenshots/screen_calc.png" width="45%" style="margin-right: 5px;">
+  <img src="./assets/screenshots/screen_simulator.png" width="45%">
+</p>
 
 ## Основные функции
 
