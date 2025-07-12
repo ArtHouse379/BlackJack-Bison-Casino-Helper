@@ -5,11 +5,11 @@ export const isOptimalBlackjackAction = (
 	dealerCards: PlayingCardType[],
 	action: ActionType
 ): boolean => {
-	// Если у дилера нет карты и у игрока меньше двух карт — не считаем ход ошибочным
+	// If the dealer has no card & the player has less than two cards - do not consider the move a mistake
 	if (playerCards.length < 2 && dealerCards.length === 0) return true
 	if (dealerCards.length === 0) return false
 
-	// Определяем значения для расчета оптимальности хода
+	// Determine the values for calculating the optimality of the move
 	const playerTotal = getHandTotal(playerCards)
 	const dealerUpcard = dealerCards[0]
 	const dealerValue = getCardNumericValue(dealerUpcard.value)
@@ -21,9 +21,9 @@ export const isOptimalBlackjackAction = (
 	if (action === 'SPLIT') {
 		if (!canSplit) return false
 		const pairValue = getCardNumericValue(playerCards[0].value)
-		// Примеры из базовой стратегии:
-		if (pairValue === 8 || pairValue === 11) return true // всегда сплитить A-A и 8-8
-		if (pairValue === 10 || pairValue === 5) return false // никогда не сплитить 10-10, 5-5
+		// Examples from the basic strategy:
+		if (pairValue === 8 || pairValue === 11) return true // always SPLIT when A-A or 8-8
+		if (pairValue === 10 || pairValue === 5) return false // never SPLIT when 10-10 or 5-5
 		if (pairValue === 9) return dealerValue !== 7 && dealerValue < 10
 		if (pairValue === 2 || pairValue === 3) return dealerValue <= 7
 		if (pairValue === 6) return dealerValue <= 6

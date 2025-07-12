@@ -16,7 +16,7 @@ const { width, height } = Dimensions.get('window')
 
 const GetPremiumScreen: React.FC = () => {
 	const handleUpgrade = () => {
-		// TODO: обработчик покупки премиума
+		// TODO: premium purchase handler
 	}
 
 	return (
@@ -27,7 +27,7 @@ const GetPremiumScreen: React.FC = () => {
 		>
 			<SafeAreaView edges={['top', 'bottom']} style={{ flex: 1 }}>
 				<View style={styles.container}>
-					{/* Кнопка назад */}
+					{/* Back button */}
 					<View style={styles.header}>
 						<BackButton />
 						<Image
@@ -37,7 +37,7 @@ const GetPremiumScreen: React.FC = () => {
 						/>
 					</View>
 
-					{/* Список преимуществ */}
+					{/* Premium Features List */}
 					<View style={styles.featuresList}>
 						<View style={styles.featureItem}>
 							<Image source={require('@assets/premium_page/premium_1.png')} />
@@ -53,7 +53,7 @@ const GetPremiumScreen: React.FC = () => {
 						</View>
 					</View>
 
-					{/* Цена и описание */}
+					{/* Premium Price and Description */}
 					<View style={styles.priceBlock}>
 						<Image source={require('@assets/premium_page/premium_price.png')} />
 						<Image
@@ -61,7 +61,7 @@ const GetPremiumScreen: React.FC = () => {
 						/>
 					</View>
 
-					{/* Кнопка покупки */}
+					{/* Upgrade Button Container */}
 					<View style={styles.buttonContainer}>
 						<Pressable style={styles.upgradeButton} onPress={handleUpgrade}>
 							{({ pressed }) => (

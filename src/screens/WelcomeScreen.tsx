@@ -2,6 +2,7 @@ import { TYPOGRAPHY } from '@/constants/typography'
 import { createNewUserProfile } from '@/utils/createUserProfile'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useNavigation } from '@react-navigation/native'
+import { StackNavigationProp } from '@react-navigation/stack'
 import { StatusBar } from 'expo-status-bar'
 import React, { useEffect } from 'react'
 import {
@@ -15,6 +16,7 @@ import {
 	View,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { RootStackParamList } from '../../App'
 
 const { width, height } = Dimensions.get('window')
 
@@ -48,12 +50,14 @@ const bannerStyles = StyleSheet.create({
 	},
 })
 
+type NavigationProp = StackNavigationProp<RootStackParamList, 'Welcome'>
+
 const WelcomeScreen: React.FC = () => {
-	const navigation = useNavigation()
+	const navigation = useNavigation<NavigationProp>()
 	const [currentScreenIndx, setCurrentBgImageIndx] = React.useState(0)
 
 	useEffect(() => {
-		// Проверяем, есть ли профиль, если нет — создаём
+		// Check if there is a profile, if not - create one
 		;(async () => {
 			const profile = await AsyncStorage.getItem('userProfile')
 			if (!profile) {
@@ -88,9 +92,6 @@ const WelcomeScreen: React.FC = () => {
 								bannerStyles[currentScreenIndx as keyof typeof bannerStyles],
 							]}
 						>
-							{/* <Text style={[TYPOGRAPHY.H3, { textAlign: 'center' }]}>
-						Master Blackjack strategies and maximize your wins!
-					</Text> */}
 							<Text
 								style={[
 									TYPOGRAPHY.H3,
@@ -105,7 +106,7 @@ const WelcomeScreen: React.FC = () => {
 							<Pressable
 								style={styles.primaryButton}
 								onPress={() => {
-									navigation.navigate('StrategyGuide' as never)
+									navigation.navigate('StrategyGuide')
 								}}
 							>
 								{({ pressed }) => (
@@ -113,8 +114,8 @@ const WelcomeScreen: React.FC = () => {
 										<Image
 											source={
 												pressed
-													? require('../../assets/buttons/button_xl_clicked.png')
-													: require('../../assets/buttons/button_xl.png')
+													? require('@assets/buttons/button_xl_clicked.png')
+													: require('@assets/buttons/button_xl.png')
 											}
 										/>
 										<Text style={[TYPOGRAPHY.H31, styles.startBtn]}>
@@ -130,7 +131,7 @@ const WelcomeScreen: React.FC = () => {
 								style={styles.secondaryButton}
 								onPress={() => {
 									setCurrentBgImageIndx(0)
-									navigation.navigate('MainMenu' as never)
+									navigation.navigate('MainMenu')
 								}}
 							>
 								<Text style={TYPOGRAPHY.H4}>Skip</Text>
@@ -140,7 +141,7 @@ const WelcomeScreen: React.FC = () => {
 								onPress={() => {
 									if (currentScreenIndx >= 3) {
 										setCurrentBgImageIndx(0)
-										navigation.navigate('MainMenu' as never)
+										navigation.navigate('MainMenu')
 									} else setCurrentBgImageIndx(currentScreenIndx + 1)
 								}}
 							>

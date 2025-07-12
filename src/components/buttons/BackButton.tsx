@@ -25,8 +25,8 @@ const BackButton: React.FC<BackButtonProps> = ({ onPress, propsFn }) => {
 				<Image
 					source={
 						pressed
-							? require('../../../assets/backArrowClicked.png')
-							: require('../../../assets/backArrow.png')
+							? require('@assets/backArrowClicked.png')
+							: require('@assets/backArrow.png')
 					}
 					style={styles.image}
 				/>

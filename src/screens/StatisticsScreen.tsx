@@ -5,6 +5,7 @@ import ViewReportButton from '@/components/ViewReportButton'
 import { SimulationResult } from '@/types/SimulationResult'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useNavigation } from '@react-navigation/native'
+import { StackNavigationProp } from '@react-navigation/stack'
 import React, { useEffect } from 'react'
 import {
 	Image,
@@ -14,12 +15,15 @@ import {
 	View,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { RootStackParamList } from '../../App'
 
 type ChartDataPoint = {
 	x: string
 	y: number
 	color?: string
 }
+
+type NavigationProp = StackNavigationProp<RootStackParamList, 'Statistics'>
 
 const StatisticsScreen: React.FC = () => {
 	const [userData, setUserData] = React.useState<any>(null)
@@ -32,7 +36,7 @@ const StatisticsScreen: React.FC = () => {
 	const [strategyChartData, setStrategyChartData] = React.useState<
 		ChartDataPoint[]
 	>([])
-	const navigation = useNavigation()
+	const navigation = useNavigation<NavigationProp>()
 
 	useEffect(() => {
 		const loadProfile = async () => {
@@ -52,7 +56,7 @@ const StatisticsScreen: React.FC = () => {
 			setHandsPlayed(simulationsPlayed)
 			setWinRate(winRate)
 
-			// Группировка по дням (только дата, без времени)
+			// Group by days (date only, no time)
 			const groupedByDay: Record<string, any[]> = {}
 			userData.simulationsHistory.forEach((simulation: SimulationResult) => {
 				const dateObj = new Date(simulation.createAt)
@@ -61,7 +65,7 @@ const StatisticsScreen: React.FC = () => {
 				groupedByDay[day].push(simulation)
 			})
 
-			// WIN/LOSE CHART DATA: количество побед по дням
+			// WIN/LOSE CHART DATA: number of wins by day
 			const winLoseData = Object.entries(groupedByDay).map(([day, sims]) => {
 				const winsCount = sims.filter(
 					(sim: SimulationResult) => sim.simulationResult === 'win'
@@ -74,7 +78,7 @@ const StatisticsScreen: React.FC = () => {
 			})
 			setWinLoseChartData(winLoseData)
 
-			// STRATEGY CHART DATA: количество правильных решений по дням
+			// STRATEGY CHART DATA: number of correct decisions by day
 			const strategyData = Object.entries(groupedByDay).map(([day, sims]) => {
 				const allMoves = sims.flatMap(
 					(sim: SimulationResult) => sim.playerActionsEfficiency || []
@@ -87,7 +91,7 @@ const StatisticsScreen: React.FC = () => {
 			})
 			setStrategyChartData(strategyData)
 
-			// OPTIMAL MOVES (общий процент)
+			// OPTIMAL MOVES (total percentage)
 			const allMoves = userData.simulationsHistory.flatMap(
 				(simulation: SimulationResult) =>
 					simulation.playerActionsEfficiency || []
@@ -102,7 +106,7 @@ const StatisticsScreen: React.FC = () => {
 	}, [userData])
 
 	const handleViewFullReport = () => {
-		navigation.navigate('Premium' as never)
+		navigation.navigate('Premium')
 	}
 
 	return (
@@ -113,12 +117,12 @@ const StatisticsScreen: React.FC = () => {
 		>
 			<SafeAreaView edges={['top', 'bottom']} style={{ flex: 1 }}>
 				<View style={styles.container}>
-					{/* Заголовок страницы */}
+					{/* Back button */}
 					<View style={styles.header}>
 						<BackButton />
 					</View>
 
-					{/* Заголовок страницы */}
+					{/* Page Title */}
 					<View style={styles.headerText}>
 						<Image
 							source={require('@assets/page_headers/statistic_header.png')}
@@ -126,7 +130,7 @@ const StatisticsScreen: React.FC = () => {
 						/>
 					</View>
 
-					{/* Содержимое страницы */}
+					{/* Page content */}
 					<ScrollView style={styles.scrollContainer}>
 						<StatisticsCard
 							title='HAND HISTORY'
@@ -136,7 +140,7 @@ const StatisticsScreen: React.FC = () => {
 								{ label: 'OPTIMAL MOVES', value: `${optimalMoves}%` },
 							]}
 						/>
-						{/* График соотношения побед/поражений */}
+						{/* Win/Loss Ratio Chart */}
 						<ProgressChart title='WIN/LOSE RATIO' data={winLoseChartData} />
 						<ProgressChart
 							title='CORRECT STRATEGY DECISIONS'
@@ -144,7 +148,7 @@ const StatisticsScreen: React.FC = () => {
 						/>
 					</ScrollView>
 
-					{/* Кнопка просмотра полного отчета */}
+					{/* View full report button */}
 					<ViewReportButton
 						title='VIEW FULL REPORT'
 						onPress={handleViewFullReport}

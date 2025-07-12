@@ -3,10 +3,10 @@ import { UserProfile } from '../types/User'
 import { createNewUserProfile } from './createUserProfile'
 
 /**
- * Обновляет профиль пользователя в локальном хранилище.
- * Если профиль отсутствует, создаёт новый.
- * @param updates - Объект с обновлёнными полями профиля
- * @returns Обновлённый профиль пользователя
+ * Update user profile in local storage.
+ * If profile not exist - create new profile.
+ * @param updates - Object with updated profile fields
+ * @returns Updated user profile
  */
 export const updateUserProfile = async (
 	updates: Partial<UserProfile>

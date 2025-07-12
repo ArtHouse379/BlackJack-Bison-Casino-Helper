@@ -2,6 +2,7 @@ import ProfileButton from '@/components/buttons/ProfileButton'
 import SettingsButton from '@/components/buttons/SettingsButton'
 import { TYPOGRAPHY } from '@/constants/typography'
 import { useNavigation } from '@react-navigation/native'
+import { StackNavigationProp } from '@react-navigation/stack'
 import React from 'react'
 import {
 	Dimensions,
@@ -14,11 +15,14 @@ import {
 	View,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { RootStackParamList } from '../../App'
 
 const { width, height } = Dimensions.get('window')
 
+type NavigationProp = StackNavigationProp<RootStackParamList, 'MainMenu'>
+
 const MainMenuScreen: React.FC = () => {
-	const navigation = useNavigation()
+	const navigation = useNavigation<NavigationProp>()
 
 	return (
 		<ImageBackground
@@ -38,7 +42,7 @@ const MainMenuScreen: React.FC = () => {
 						<View style={[styles.btnContainer, { marginRight: 24 }]}>
 							<TouchableOpacity
 								onPress={() => {
-									navigation.navigate('StrategyGuide' as never)
+									navigation.navigate('StrategyGuide')
 								}}
 							>
 								<Image
@@ -54,7 +58,7 @@ const MainMenuScreen: React.FC = () => {
 						<View style={styles.btnContainer}>
 							<TouchableOpacity
 								onPress={() => {
-									navigation.navigate('HandDecision' as never)
+									navigation.navigate('HandDecision')
 								}}
 							>
 								<Image
@@ -70,7 +74,7 @@ const MainMenuScreen: React.FC = () => {
 						<View style={[styles.btnContainer, { marginRight: 24 }]}>
 							<TouchableOpacity
 								onPress={() => {
-									navigation.navigate('Statistics' as never)
+									navigation.navigate('Statistics')
 								}}
 							>
 								<Image
@@ -86,7 +90,7 @@ const MainMenuScreen: React.FC = () => {
 						<View style={styles.btnContainer}>
 							<TouchableOpacity
 								onPress={() => {
-									navigation.navigate('HandSimulator' as never)
+									navigation.navigate('HandSimulator')
 								}}
 							>
 								<Image
@@ -105,7 +109,7 @@ const MainMenuScreen: React.FC = () => {
 						<Pressable
 							style={styles.primaryButton}
 							onPress={() => {
-								navigation.navigate('StrategyGuide' as never)
+								navigation.navigate('StrategyGuide')
 							}}
 						>
 							{({ pressed }) => (

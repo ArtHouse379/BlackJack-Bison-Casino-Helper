@@ -244,12 +244,12 @@ const HandSimulatorScreen: React.FC = () => {
 		>
 			<SafeAreaView edges={['top', 'bottom']} style={{ flex: 1 }}>
 				<View style={styles.container}>
-					{/* Кнопка назад */}
+					{/* Back button */}
 					<View style={styles.header}>
 						<BackButton propsFn={resetGame} />
 					</View>
 
-					{/* Заголовок страницы */}
+					{/* Page Title */}
 					<View style={styles.headerText}>
 						<Image
 							source={require('@assets/page_headers/hand_simulator_header.png')}
@@ -320,7 +320,7 @@ const HandSimulatorScreen: React.FC = () => {
 						)}
 					</View>
 
-					{/* Секция игрового стола */}
+					{/* Section of the gaming table */}
 					<View style={styles.tableContainer}>
 						<ImageBackground
 							source={require('@assets/table.png')}
@@ -368,7 +368,7 @@ const HandSimulatorScreen: React.FC = () => {
 								<RenderCards cards={playerCards} />
 							</View>
 
-							{/* Дополнительные карты */}
+							{/* Additional cards */}
 							{secondHandCards.length > 0 && (
 								<View
 									style={[
@@ -390,7 +390,7 @@ const HandSimulatorScreen: React.FC = () => {
 						</ImageBackground>
 					</View>
 
-					{/* Секция кнопок действий */}
+					{/* Section of action buttons */}
 					<View style={styles.actionButtonsContainer}>
 						<ActionButton
 							disable={isInteractionLocked}
@@ -428,7 +428,7 @@ const HandSimulatorScreen: React.FC = () => {
 						/>
 					</View>
 
-					{/* Секция с результатами */}
+					{/* Section of results */}
 					{resultMessage && (
 						<View
 							style={{
@@ -449,7 +449,7 @@ const HandSimulatorScreen: React.FC = () => {
 						</View>
 					)}
 
-					{/* Секция с кнопкой сброса */}
+					{/* Section of reset button */}
 					<View style={styles.primaryButtonContainer}>
 						<Pressable
 							disabled={isDealerTurn}

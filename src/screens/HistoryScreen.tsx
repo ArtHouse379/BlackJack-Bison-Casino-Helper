@@ -1,6 +1,7 @@
 import BackButton from '@/components/buttons/BackButton'
 import { TYPOGRAPHY } from '@/constants/typography'
 import { useNavigation } from '@react-navigation/native'
+import { StackNavigationProp } from '@react-navigation/stack'
 import React from 'react'
 import {
 	Dimensions,
@@ -12,15 +13,18 @@ import {
 	View,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { RootStackParamList } from '../../App'
 
 const { width, height } = Dimensions.get('window')
 
+type NavigationProp = StackNavigationProp<RootStackParamList, 'History'>
+
 const HistoryScreen: React.FC = () => {
 	const [analysisType, setAnalysisType] = React.useState('ANALYSIS TYPE')
-	const navigation = useNavigation()
+	const navigation = useNavigation<NavigationProp>()
 
 	const handleFullReport = () => {
-		navigation.navigate('Premium' as never)
+		navigation.navigate('Premium')
 	}
 
 	return (
@@ -30,7 +34,7 @@ const HistoryScreen: React.FC = () => {
 		>
 			<SafeAreaView edges={['top', 'bottom']} style={{ flex: 1 }}>
 				<View style={styles.container}>
-					{/* Кнопка назад и заголовок */}
+					{/* Back button and header */}
 					<View style={styles.header}>
 						<BackButton />
 
@@ -41,7 +45,7 @@ const HistoryScreen: React.FC = () => {
 						/>
 					</View>
 
-					{/* Выпадающий список выбора анализа */}
+					{/* Analysis selection drop down list */}
 					<View style={styles.dropdownContainer}>
 						<View>
 							<ImageBackground
@@ -58,7 +62,7 @@ const HistoryScreen: React.FC = () => {
 						</View>
 					</View>
 
-					{/* Карточки истории */}
+					{/* History cards */}
 					<View style={styles.cardsContainer}>
 						<View style={styles.card}>
 							<Text style={[styles.cardTitle, TYPOGRAPHY.H27]}>
@@ -78,7 +82,7 @@ const HistoryScreen: React.FC = () => {
 						</View>
 					</View>
 
-					{/* Кнопка полного отчета */}
+					{/* Full report button */}
 					<View style={styles.fullReportContainer}>
 						<Pressable style={styles.primaryButton} onPress={handleFullReport}>
 							{({ pressed }) => (

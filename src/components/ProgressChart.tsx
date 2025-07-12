@@ -14,7 +14,7 @@ import {
 import Svg, { Circle, Path, Line as SvgLine } from 'react-native-svg'
 
 interface ChartDataPoint {
-	x: string // дата в формате YYYY-MM-DDT00-00-00
+	x: string // date format YYYY-MM-DDT00-00-00
 	y: number
 	color?: string
 }
@@ -62,7 +62,7 @@ const ProgressChart: React.FC<ProgressChartProps> = ({ title, data }) => {
 		setCalendarVisible(null)
 	}
 
-	// YAxis: всегда 5 шагов, максимум 5 или больше, если есть значения больше 5
+	// YAxis: always 5 steps, maximum 5 or more if there are values greater than 5
 	const getYAxisRange = (data: ChartDataPoint[]) => {
 		const maxYData = Math.max(0, ...data.map(d => d.y))
 		const maxY = maxYData > 5 ? Math.ceil(maxYData) : 5
@@ -75,7 +75,7 @@ const ProgressChart: React.FC<ProgressChartProps> = ({ title, data }) => {
 	const padding = 15
 	const chartWidth = width * 0.8 - 2 * padding
 	const chartHeight = 150 - 2 * padding
-	const yAxisSteps = 5 // всегда 5 шагов
+	const yAxisSteps = 5 // always 5 steps
 
 	const yRange = getYAxisRange(filteredData)
 	const yStep = (yRange.max - yRange.min) / yAxisSteps
@@ -91,7 +91,7 @@ const ProgressChart: React.FC<ProgressChartProps> = ({ title, data }) => {
 			return (
 				<React.Fragment key={index}>
 					<Circle cx={x} cy={y} r={12} fill={point.color || '#79FF48'} />
-					{/* Линии пересечения */}
+					{/* Intersection lines */}
 					<SvgLine
 						x1={x}
 						y1={y}
@@ -173,7 +173,7 @@ const ProgressChart: React.FC<ProgressChartProps> = ({ title, data }) => {
 			const cp1y = p0.y
 			const cp2x = p0.x + (p1.x - p0.x) / 2
 			const cp2y = p1.y
-			const color = p1.y < p0.y ? '#79FF48' : '#EF644C' // зелёный если вверх, красный если вниз
+			const color = p1.y < p0.y ? '#79FF48' : '#EF644C' // up - green, down - red
 			const d = `M ${p0.x} ${p0.y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p1.x} ${p1.y}`
 			segments.push(
 				<Path key={i} d={d} stroke={color} strokeWidth={4} fill='none' />
@@ -195,7 +195,7 @@ const ProgressChart: React.FC<ProgressChartProps> = ({ title, data }) => {
 		return dates
 	}
 
-	// Хук для дополнения данных нулями по всем дням диапазона
+	// Hook to pad data with zeros for all days in a range
 	const getFilledData = React.useCallback(() => {
 		if (!startDate || !endDate) return data
 		const dates = getDatesInRange(startDate, endDate)

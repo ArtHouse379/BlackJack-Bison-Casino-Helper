@@ -61,10 +61,7 @@ export const useSimulatorStore = create<SimulatorState>()(set => ({
 
 	resetAll: () =>
 		set({
-			playerCards: [
-				// { value: 'K', suit: 'diamonds' },
-				// { value: 'K', suit: 'spades' },
-			],
+			playerCards: [],
 			dealerCards: [],
 			opponentCards: [
 				{ value: 'A', suit: 'diamonds' },

@@ -49,7 +49,7 @@ const HandDecisionScreen: React.FC = () => {
 	} = useBlackjackStore()
 
 	useEffect(() => {
-		// Инициализация случайных карт при загрузке
+		// Initialize random cards on boot
 		const initialPlayerCards = [getRandomCard(), getRandomCard()]
 		const initialDealerCard = getRandomCard()
 		setPlayerCards(initialPlayerCards)
@@ -64,7 +64,7 @@ const HandDecisionScreen: React.FC = () => {
 	const handleRecalculate = () => {
 		if (!dealerCard || playerCards.length < 2 || !selectedAction) return
 
-		// Проверка для SPLIT
+		// Check for SPLIT
 		if (
 			selectedAction === 'SPLIT' &&
 			playerCards[0].value !== playerCards[1].value
@@ -115,11 +115,11 @@ const HandDecisionScreen: React.FC = () => {
 		>
 			<SafeAreaView edges={['top', 'bottom']} style={{ flex: 1 }}>
 				<View style={styles.container}>
-					{/* Кнопка назад */}
+					{/* Back button */}
 					<View style={styles.header}>
 						<BackButton propsFn={resetGame} />
 					</View>
-					{/* Заголовок страницы */}
+					{/* Page Title*/}
 					<View style={styles.headerText}>
 						<Image
 							source={require('@assets/page_headers/hand_decision_header.png')}
@@ -128,7 +128,7 @@ const HandDecisionScreen: React.FC = () => {
 						/>
 					</View>
 
-					{/* Секция с картами игрока */}
+					{/* Player Cards Section */}
 					<View style={styles.section}>
 						<ImageBackground
 							source={require('@assets/player_cards_placeholder.png')}
@@ -156,7 +156,7 @@ const HandDecisionScreen: React.FC = () => {
 						</View>
 					</View>
 
-					{/* Секция с картой дилера */}
+					{/* Dealer Cards Section */}
 					<View style={styles.section}>
 						<ImageBackground
 							source={require('@assets/up_card_placeholder.png')}
@@ -180,7 +180,7 @@ const HandDecisionScreen: React.FC = () => {
 						</View>
 					</View>
 
-					{/* Секция с кнопками действий */}
+					{/* Action Buttons Section*/}
 					<View style={styles.actionsContainer}>
 						<View style={styles.actionsRow}>
 							<ActionButton
@@ -216,10 +216,10 @@ const HandDecisionScreen: React.FC = () => {
 						</View>
 					</View>
 
-					{/* Секция с результатом */}
+					{/* Result Display Section */}
 					<ResultDisplay percentage={winChance} />
 
-					{/* Кнопка пересчета */}
+					{/* Recalculate Button Section */}
 					<Pressable
 						disabled={!selectedAction}
 						style={styles.recalculateButtonContainer}
@@ -242,7 +242,7 @@ const HandDecisionScreen: React.FC = () => {
 						)}
 					</Pressable>
 				</View>
-				{/* Сообщение об ошибке */}
+				{/* Error Message Section */}
 				{errorMessage && (
 					<View style={{ alignItems: 'center', marginBottom: 10 }}>
 						<Text

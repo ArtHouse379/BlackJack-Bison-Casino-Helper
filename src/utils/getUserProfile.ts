@@ -10,7 +10,7 @@ export const getUserProfile = async (): Promise<UserProfile | undefined> => {
 			if (parsed && parsed.id && parsed.username) return parsed
 		}
 	} catch (e) {
-		throw new Error('Ошибка при чтении профиля из AsyncStorage')
+		throw new Error('Error reading profile from AsyncStorage')
 	}
 	createNewUserProfile()
 	return undefined

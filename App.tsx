@@ -38,12 +38,13 @@ export default function App() {
 	})
 
 	if (!fontsLoaded) {
-		return null // или <AppLoading />
+		return null // || <AppLoading />
 	}
 	return (
 		<SafeAreaProvider>
 			<NavigationContainer>
 				<Stack.Navigator
+					initialRouteName='Welcome'
 					screenOptions={{
 						headerShown: false,
 						cardStyle: { backgroundColor: '#1C1C1E' },

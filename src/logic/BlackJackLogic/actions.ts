@@ -9,9 +9,9 @@ export function simulateHit(
 	const newHand = [...playerHand, newCard]
 	const value = getHandValue(newHand)
 
-	if (value > 21) return 0 // перебор — проигрыш
-	if (value === 21) return 1 // лучший случай
-	return 0.5 // базовая оценка, можно усложнить
+	if (value > 21) return 0 // Bust - lose
+	if (value === 21) return 1 // Best case - win
+	return 0.5 // Basic estimate, can be increased
 }
 
 export function simulateStand(
@@ -34,7 +34,7 @@ export function simulateDouble(
 	const doubledHand = [...playerHand, newCard]
 	const value = getHandValue(doubledHand)
 
-	return value > 21 ? 0 : 0.6 // рискуем, но шанс средний
+	return value > 21 ? 0 : 0.6 // risky, but have average chances
 }
 
 export function simulateSplit(
@@ -43,5 +43,5 @@ export function simulateSplit(
 ): number {
 	if (playerHand.length !== 2 || playerHand[0].value !== playerHand[1].value)
 		return 0.1
-	return 0.5 // базовая оценка, расширяй под стратегию
+	return 0.5 // Basic setting, adjustable by strategy
 }

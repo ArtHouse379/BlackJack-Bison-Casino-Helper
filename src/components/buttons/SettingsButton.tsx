@@ -1,19 +1,23 @@
 import { useNavigation } from '@react-navigation/native'
+import { StackNavigationProp } from '@react-navigation/stack'
 import React from 'react'
 import { Image, Pressable, StyleSheet } from 'react-native'
+import { RootStackParamList } from '../../../App'
 
 interface SettingsButtonProps {
 	onPress?: () => void
 }
 
+type NavigationProp = StackNavigationProp<RootStackParamList>
+
 const SettingsButton: React.FC<SettingsButtonProps> = ({ onPress }) => {
-	const navigation = useNavigation()
+	const navigation = useNavigation<NavigationProp>()
 
 	const handlePress = () => {
 		if (onPress) {
 			onPress()
 		} else {
-			navigation.navigate('History' as never)
+			navigation.navigate('History')
 		}
 	}
 
@@ -23,8 +27,8 @@ const SettingsButton: React.FC<SettingsButtonProps> = ({ onPress }) => {
 				<Image
 					source={
 						pressed
-							? require('../../../assets/settings_icon.png')
-							: require('../../../assets/settings_icon_clicked.png')
+							? require('@assets/settings_icon.png')
+							: require('@assets/settings_icon_clicked.png')
 					}
 					style={styles.image}
 				/>

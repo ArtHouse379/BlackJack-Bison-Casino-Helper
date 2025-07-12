@@ -1,3 +1,4 @@
+import { TYPOGRAPHY } from '@/constants/typography'
 import {
 	Image,
 	ImageBackground,
@@ -6,7 +7,6 @@ import {
 	Text,
 	View,
 } from 'react-native'
-import { TYPOGRAPHY } from '../../constants/typography'
 
 interface StrategyThemesNavButtonProps {
 	theme: string
@@ -57,8 +57,8 @@ const StrategyThemesNavButton: React.FC<StrategyThemesNavButtonProps> = ({
 						<Image
 							source={
 								pressed
-									? require('../../../assets/leftArrowClicked.png')
-									: require('../../../assets/leftArrow.png')
+									? require('@assets/leftArrowClicked.png')
+									: require('@assets/leftArrow.png')
 							}
 							style={styles.image}
 						/>
@@ -77,8 +77,8 @@ const StrategyThemesNavButton: React.FC<StrategyThemesNavButtonProps> = ({
 						<Image
 							source={
 								pressed
-									? require('../../../assets/rightArrowClicked.png')
-									: require('../../../assets/rightArrow.png')
+									? require('@assets/rightArrowClicked.png')
+									: require('@assets/rightArrow.png')
 							}
 							style={styles.image}
 						/>

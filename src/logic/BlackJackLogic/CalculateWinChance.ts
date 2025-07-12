@@ -27,13 +27,13 @@ const calculateHandValue = (cards: PlayingCardType[]): number => {
 const dealerDangerLevel = (dealerCard: PlayingCardType): number => {
 	const dealerValue = getCardValue(dealerCard.value)
 
-	if (dealerCard.value === 'A') return 5 // Туз — очень опасно
-	if (dealerValue >= 10) return 4 // 10, J, Q, K — сильные карты
-	if (dealerValue >= 7) return 3 // 7, 8, 9 — хорошие карты
-	if (dealerValue === 6 || dealerValue === 5) return 2 // средние карты
-	if (dealerValue <= 4) return 1 // 2, 3, 4 — слабые карты
+	if (dealerCard.value === 'A') return 5 // Ace - very dangerous
+	if (dealerValue >= 10) return 4 // 10, J, Q, K - strong cards
+	if (dealerValue >= 7) return 3 // 7, 8, 9 - good cards
+	if (dealerValue === 6 || dealerValue === 5) return 2 // average cards
+	if (dealerValue <= 4) return 1 // 2, 3, 4 — weak cards
 
-	return 3 // по-умолчанию
+	return 3 // default
 }
 
 export const calculateWinChance = (
@@ -43,16 +43,16 @@ export const calculateWinChance = (
 	const playerTotal = calculateHandValue(playerCards)
 	const dangerLevel = dealerDangerLevel(dealerCard)
 
-	if (playerTotal > 21) return 0
-	if (playerTotal === 21 && playerCards.length === 2) return 99 // Блэкджек (2 карты)
-	if (playerTotal === 21) return 95
+	if (playerTotal > 21) return 0 // Bust - lose
+	if (playerTotal === 21 && playerCards.length === 2) return 99 // Blackjack (2 cards) - win
+	if (playerTotal === 21) return 95 // 21 - win
 
 	let baseChance = 50
 
-	// Чем выше сумма игрока, тем лучше шанс
-	baseChance += (playerTotal - 12) * 5 // 5% за каждое очко сверх 12
+	// The higher the amount, the better the chance
+	baseChance += (playerTotal - 12) * 5 // 5% for each point over 12
 
-	// Корректируем шанс в зависимости от опасности карты дилера
+	// Changing the chance depending on the danger of the dealer's card
 	switch (dangerLevel) {
 		case 5:
 			baseChance -= 25
@@ -71,12 +71,12 @@ export const calculateWinChance = (
 			break
 	}
 
-	// Если сумма игрока меньше 17 — шанс чуть хуже
+	// If the player's amount is less than 17, the chance is slightly lower
 	if (playerTotal < 17) {
 		baseChance -= 10
 	}
 
-	// Ограничение шанса в диапазоне от 0 до 100
+	// Chance limit in the range from 0 to 100
 	baseChance = Math.max(0, Math.min(100, baseChance))
 
 	return baseChance

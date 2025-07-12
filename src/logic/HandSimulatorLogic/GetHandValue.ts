@@ -10,13 +10,13 @@ export const getHandValue = (cards: PlayingCardType[]): number => {
 			total += 10
 		} else if (value === 'A') {
 			aces += 1
-			total += 11 // Сначала считаем тузы как 11
+			total += 11 // count aces as 11
 		} else {
 			total += parseInt(value, 10)
 		}
 	})
 
-	// Если перебор, переводим тузы в 1
+	// If it's too much - convert the aces to 1
 	while (total > 21 && aces > 0) {
 		total -= 10
 		aces -= 1

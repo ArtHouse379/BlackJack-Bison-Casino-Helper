@@ -22,19 +22,19 @@ export default function AnimatedStars() {
 					Animated.delay(Math.random() * 5000),
 					Animated.timing(star.opacity, {
 						toValue: 1,
-						duration: 2200, // Увеличено для более плавного появления
-						easing: Easing.bezier(0.25, 0.1, 0.25, 1), // Добавлен плавный переход
+						duration: 2200, // Increase for smoother appearance
+						easing: Easing.bezier(0.25, 0.1, 0.25, 1), // Added smooth transition
 						useNativeDriver: true,
 					}),
 					Animated.timing(star.opacity, {
 						toValue: 1,
-						duration: 1000, // Звезда остается видимой 2 секунды
+						duration: 1000, // Star visible for 1 second
 						useNativeDriver: true,
 					}),
 					Animated.timing(star.opacity, {
 						toValue: 0,
-						duration: 2000, // Плавное исчезновение
-						easing: Easing.bezier(0.25, 0.1, 0.25, 1), // Плавный переход
+						duration: 1000, // Star fading away in 1 second
+						easing: Easing.bezier(0.25, 0.1, 0.25, 1), // Added smooth transition
 						useNativeDriver: true,
 					}),
 				]).start(() => animateStar())
@@ -61,7 +61,7 @@ export default function AnimatedStars() {
 					]}
 				>
 					<Image
-						source={require('../../../assets/animated_star.png')}
+						source={require('@assets/animated_star.png')}
 						style={{ width: '100%', height: '100%' }}
 						resizeMode='contain'
 					/>

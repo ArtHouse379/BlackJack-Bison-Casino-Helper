@@ -1,3 +1,4 @@
+import { TYPOGRAPHY } from '@/constants/typography'
 import React, { useState } from 'react'
 import {
 	FlatList,
@@ -6,7 +7,6 @@ import {
 	TouchableOpacity,
 	View,
 } from 'react-native'
-import { TYPOGRAPHY } from '../../constants/typography'
 
 interface StrategyGuidesListProps {
 	list: { title: string; text: string }[]

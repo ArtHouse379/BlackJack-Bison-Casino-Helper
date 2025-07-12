@@ -7,6 +7,7 @@ import { UserProfile } from '@/types/User'
 import { updateUserProfile } from '@/utils/updateUserProfile'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useNavigation } from '@react-navigation/native'
+import { StackNavigationProp } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
 import {
 	Image,
@@ -19,6 +20,9 @@ import {
 	View,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { RootStackParamList } from '../../App'
+
+type NavigationProp = StackNavigationProp<RootStackParamList, 'Profile'>
 
 export default function ProfileScreen() {
 	const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(true)
@@ -28,9 +32,9 @@ export default function ProfileScreen() {
 	const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
 	const [handsPlayed, setHandsPlayed] = useState(0)
 	const [strategyTestsPassed, setStrategyTestsPassed] = useState(0)
-	const navigation = useNavigation()
+	const navigation = useNavigation<NavigationProp>()
 
-	// Загрузка профиля при монтировании
+	// Load profile on mount
 	useEffect(() => {
 		const loadProfile = async () => {
 			const storedProfile = await AsyncStorage.getItem('userProfile')
@@ -40,7 +44,7 @@ export default function ProfileScreen() {
 				setAvatarUrl(profile.avatarUrl)
 				setIsNotificationsEnabled(profile.isNotificationEnabled)
 				setLanguage(profile.language)
-				// Пример: handsPlayed и strategyTestsPassed — из истории, если есть
+				// handsPlayed and strategyTestsPassed - from history, if exist
 				setHandsPlayed(profile.simulationsHistory?.length || 0)
 				setStrategyTestsPassed(profile.calculationsHistory?.length || 0)
 			}
@@ -48,7 +52,7 @@ export default function ProfileScreen() {
 		loadProfile()
 	}, [])
 
-	// Функция обновления профиля
+	// Update profile function
 	const handleProfileUpdate = async (updates: Partial<UserProfile>) => {
 		const updated = await updateUserProfile(updates)
 		if (updates.username !== undefined) setNickname(updated.username)
@@ -187,9 +191,7 @@ export default function ProfileScreen() {
 						</View>
 
 						<View style={styles.getPremiumContainer}>
-							<Pressable
-								onPress={() => navigation.navigate('Premium' as never)}
-							>
+							<Pressable onPress={() => navigation.navigate('Premium')}>
 								<Text
 									style={[TYPOGRAPHY.H25, { textDecorationLine: 'underline' }]}
 								>

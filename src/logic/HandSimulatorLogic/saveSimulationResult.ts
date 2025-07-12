@@ -13,6 +13,6 @@ export const saveSimulationToUserProfile = async (
 			simulationsHistory: [...currentHistory, simulationResult],
 		})
 	} catch (e) {
-		console.error('Ошибка при сохранении симуляции в профиль пользователя:', e)
+		console.error('Error saving simulation to user profile:', e)
 	}
 }

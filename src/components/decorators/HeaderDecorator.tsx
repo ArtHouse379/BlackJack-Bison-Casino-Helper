@@ -24,12 +24,12 @@ const HeaderDecorator: React.FC<HeaderDecoratorProps> = ({
 	gradientColors = ['#76BDFF', '#FF00BF'],
 	gradientAngle = 45,
 }) => {
-	// Расчет координат для градиента на основе угла
+	// Calculate coordinates for a gradient based on an angle
 	const calculateGradientCoords = (angle: number) => {
-		// Преобразуем угол в радианы
+		// Converting an angle to radians
 		const radians = (angle * Math.PI) / 180
 
-		// Вычисляем координаты начала и конца градиента
+		// Calculate the coordinates of the beginning and end of the gradient
 		return {
 			x1: '0%',
 			y1: '0%',
@@ -46,7 +46,7 @@ const HeaderDecorator: React.FC<HeaderDecoratorProps> = ({
 		<View style={styles.container}>
 			<Svg height={fontSize * 1.5} width='100%'>
 				<Defs>
-					{/* Определение градиента */}
+					{/* Define a gradient */}
 					<SvgGradient id={gradientId} {...gradientCoords}>
 						{gradientColors.map((color, index) => (
 							<Stop
@@ -57,7 +57,7 @@ const HeaderDecorator: React.FC<HeaderDecoratorProps> = ({
 						))}
 					</SvgGradient>
 
-					{/* Создание маски из текста */}
+					{/* Create a mask from the text */}
 					<Mask id={maskId}>
 						<Rect x='0' y='0' width='100%' height='100%' fill='white' />
 						<Text
@@ -74,7 +74,7 @@ const HeaderDecorator: React.FC<HeaderDecoratorProps> = ({
 					</Mask>
 				</Defs>
 
-				{/* Прямоугольник с градиентом, обрезанный по форме текста */}
+				{/* Rectangle with a gradient, cut to the shape of the text */}
 				<Rect
 					x='0'
 					y='0'
@@ -84,7 +84,7 @@ const HeaderDecorator: React.FC<HeaderDecoratorProps> = ({
 					mask={`url(#${maskId})`}
 				/>
 
-				{/* Сам текст для создания эффекта обводки */}
+				{/* The text to create the outline effect */}
 				<Text
 					x='50%'
 					y='50%'

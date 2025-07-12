@@ -1,6 +1,6 @@
+import { TYPOGRAPHY } from '@/constants/typography'
 import React from 'react'
 import { Dimensions, Image, Pressable, StyleSheet, Text } from 'react-native'
-import { TYPOGRAPHY } from '../../constants/typography'
 
 interface ActionButtonProps {
 	disable?: boolean

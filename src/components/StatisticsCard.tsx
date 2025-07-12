@@ -1,3 +1,4 @@
+import { TYPOGRAPHY } from '@/constants/typography'
 import React from 'react'
 import {
 	Dimensions,
@@ -6,7 +7,6 @@ import {
 	Text,
 	View,
 } from 'react-native'
-import { TYPOGRAPHY } from '../constants/typography'
 
 interface StatisticsItem {
 	label: string
@@ -25,7 +25,7 @@ const StatisticsCard: React.FC<StatisticsCardProps> = ({ title, items }) => {
 		<View style={styles.container}>
 			<ImageBackground
 				style={styles.bgImage}
-				source={require('../../assets/hand_history_panel.png')}
+				source={require('@assets/hand_history_panel.png')}
 				resizeMode='cover'
 			>
 				<Text style={[TYPOGRAPHY.H15, styles.title]}>{title}</Text>
