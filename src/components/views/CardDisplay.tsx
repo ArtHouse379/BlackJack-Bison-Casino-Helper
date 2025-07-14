@@ -1,4 +1,5 @@
 import { CARD_SUITS } from '@/constants/cards'
+import { CARD_VALUE_MAP } from '@/constants/cardValues'
 import { TYPOGRAPHY } from '@/constants/typography'
 import React from 'react'
 import {
@@ -11,8 +12,8 @@ import {
 } from 'react-native'
 
 interface CardDisplayProps {
-	value: string
-	suit: string
+	value: keyof typeof CARD_VALUE_MAP
+	suit: keyof typeof CARD_SUITS
 	onEdit: () => void
 }
 

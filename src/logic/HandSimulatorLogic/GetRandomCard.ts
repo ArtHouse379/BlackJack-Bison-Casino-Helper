@@ -1,30 +1,18 @@
-const CARD_VALUES = [
-	'2',
-	'3',
-	'4',
-	'5',
-	'6',
-	'7',
-	'8',
-	'9',
-	'10',
-	'J',
-	'Q',
-	'K',
-	'A',
-]
-const CARD_SUITS = ['hearts', 'diamonds', 'clubs', 'spades']
+import { CARD_SUITS, CARD_VALUES } from '@/constants/cards'
+import { CARD_VALUE_MAP } from '@/constants/cardValues'
+import { PlayingCardType } from '@/types/PlayingCard'
 
-export type Card = {
-	value: string
-	suit: string
-}
+export function generateRandomCard(
+	excluded: PlayingCardType[]
+): PlayingCardType {
+	const allCards: PlayingCardType[] = []
 
-export function generateRandomCard(excluded: Card[]): Card {
-	const allCards: Card[] = []
-
-	for (const value of CARD_VALUES) {
-		for (const suit of CARD_SUITS) {
+	for (const value of Object.keys(CARD_VALUE_MAP) as Array<
+		keyof typeof CARD_VALUE_MAP
+	>) {
+		for (const suit of Object.keys(CARD_SUITS) as Array<
+			keyof typeof CARD_SUITS
+		>) {
 			allCards.push({ value, suit })
 		}
 	}
@@ -40,4 +28,9 @@ export function generateRandomCard(excluded: Card[]): Card {
 
 	const randomIndex = Math.floor(Math.random() * availableCards.length)
 	return availableCards[randomIndex]
+}
+
+export const getRandomCard = (): PlayingCardType => {
+	const randomIndex = Math.floor(Math.random() * CARD_VALUES.length)
+	return CARD_VALUES[randomIndex] as PlayingCardType
 }

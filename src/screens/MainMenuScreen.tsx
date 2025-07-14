@@ -1,5 +1,6 @@
 import ProfileButton from '@/components/buttons/ProfileButton'
 import SettingsButton from '@/components/buttons/SettingsButton'
+import { APP_ROUTES } from '@/constants/routes'
 import { TYPOGRAPHY } from '@/constants/typography'
 import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
@@ -42,7 +43,7 @@ const MainMenuScreen: React.FC = () => {
 						<View style={[styles.btnContainer, { marginRight: 24 }]}>
 							<TouchableOpacity
 								onPress={() => {
-									navigation.navigate('StrategyGuide')
+									navigation.navigate(APP_ROUTES.StrategyGuide)
 								}}
 							>
 								<Image
@@ -58,7 +59,7 @@ const MainMenuScreen: React.FC = () => {
 						<View style={styles.btnContainer}>
 							<TouchableOpacity
 								onPress={() => {
-									navigation.navigate('HandDecision')
+									navigation.navigate(APP_ROUTES.HandDecision)
 								}}
 							>
 								<Image
@@ -74,7 +75,7 @@ const MainMenuScreen: React.FC = () => {
 						<View style={[styles.btnContainer, { marginRight: 24 }]}>
 							<TouchableOpacity
 								onPress={() => {
-									navigation.navigate('Statistics')
+									navigation.navigate(APP_ROUTES.Statistics)
 								}}
 							>
 								<Image
@@ -90,7 +91,7 @@ const MainMenuScreen: React.FC = () => {
 						<View style={styles.btnContainer}>
 							<TouchableOpacity
 								onPress={() => {
-									navigation.navigate('HandSimulator')
+									navigation.navigate(APP_ROUTES.HandSimulator)
 								}}
 							>
 								<Image
@@ -109,7 +110,7 @@ const MainMenuScreen: React.FC = () => {
 						<Pressable
 							style={styles.primaryButton}
 							onPress={() => {
-								navigation.navigate('StrategyGuide')
+								navigation.navigate(APP_ROUTES.StrategyGuide)
 							}}
 						>
 							{({ pressed }) => (

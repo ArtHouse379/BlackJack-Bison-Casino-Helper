@@ -1,3 +1,4 @@
+import { APP_ROUTES } from '@/constants/routes'
 import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import React from 'react'
@@ -17,7 +18,7 @@ const SettingsButton: React.FC<SettingsButtonProps> = ({ onPress }) => {
 		if (onPress) {
 			onPress()
 		} else {
-			navigation.navigate('History')
+			navigation.navigate(APP_ROUTES.History)
 		}
 	}
 

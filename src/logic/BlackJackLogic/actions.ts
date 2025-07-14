@@ -1,11 +1,12 @@
 import { PlayingCardType } from '@/types/PlayingCard'
-import { drawRandomCard, getCardValue, getHandValue } from './helpers'
+import { getRandomCard } from '../HandSimulatorLogic/GetRandomCard'
+import { getCardValue, getHandValue } from './helpers'
 
 export function simulateHit(
 	playerHand: PlayingCardType[],
 	dealerCard: PlayingCardType
 ): number {
-	const newCard = drawRandomCard()
+	const newCard = getRandomCard()
 	const newHand = [...playerHand, newCard]
 	const value = getHandValue(newHand)
 
@@ -30,7 +31,7 @@ export function simulateDouble(
 	playerHand: PlayingCardType[],
 	dealerCard: PlayingCardType
 ): number {
-	const newCard = drawRandomCard()
+	const newCard = getRandomCard()
 	const doubledHand = [...playerHand, newCard]
 	const value = getHandValue(doubledHand)
 

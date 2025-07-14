@@ -1,4 +1,5 @@
 import BackButton from '@/components/buttons/BackButton'
+import { APP_ROUTES } from '@/constants/routes'
 import { TYPOGRAPHY } from '@/constants/typography'
 import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
@@ -24,7 +25,7 @@ const HistoryScreen: React.FC = () => {
 	const navigation = useNavigation<NavigationProp>()
 
 	const handleFullReport = () => {
-		navigation.navigate('Premium')
+		navigation.navigate(APP_ROUTES.Premium)
 	}
 
 	return (

@@ -1,4 +1,4 @@
-import * as ImagePicker from 'expo-image-picker'
+import { pickImageFromLibrary } from '@/utils/imagePicker/pickImage'
 import React from 'react'
 import { Image, Pressable, StyleSheet } from 'react-native'
 
@@ -13,27 +13,10 @@ export default function AvatarImagePicker({
 	onImagePicked,
 	style,
 }: Props) {
-	const requestPermission = async () => {
-		const { status, canAskAgain } =
-			await ImagePicker.requestMediaLibraryPermissionsAsync()
-		if (status !== 'granted') {
-			if (!canAskAgain) {
-				alert('Please allow access to photos by your device settings.')
-			}
-			return false
-		}
-		return true
-	}
-
-	const pickImage = async () => {
-		const granted = await requestPermission()
-		if (!granted) return
-		const result = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ['images'],
-			quality: 0.8,
-		})
-		if (result.assets && result.assets.length > 0) {
-			onImagePicked(result.assets[0].uri)
+	const handlePick = async () => {
+		const uri = await pickImageFromLibrary()
+		if (uri) {
+			onImagePicked(uri)
 		}
 	}
 
@@ -48,7 +31,7 @@ export default function AvatarImagePicker({
 					resizeMode='cover'
 				/>
 			)}
-			<Pressable style={styles.avatarEditIcon} onPress={pickImage}>
+			<Pressable style={styles.avatarEditIcon} onPress={handlePick}>
 				{({ pressed }) => (
 					<Image
 						source={

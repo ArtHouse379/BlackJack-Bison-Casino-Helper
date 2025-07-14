@@ -1,3 +1,4 @@
+import { APP_ROUTES } from '@/constants/routes'
 import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import React from 'react'
@@ -16,7 +17,7 @@ const ProfileButton: React.FC<ProfileButtonProps> = ({ onPress }) => {
 		if (onPress) {
 			onPress()
 		} else {
-			navigation.navigate('Profile')
+			navigation.navigate(APP_ROUTES.Profile)
 		}
 	}
 

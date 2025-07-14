@@ -24,27 +24,3 @@ export function getHandValue(hand: PlayingCardType[]): number {
 
 	return value
 }
-
-export function drawRandomCard(): PlayingCardType {
-	const values = [
-		'2',
-		'3',
-		'4',
-		'5',
-		'6',
-		'7',
-		'8',
-		'9',
-		'10',
-		'J',
-		'Q',
-		'K',
-		'A',
-	]
-	const suits = ['hearts', 'spades', 'clubs', 'diamonds']
-
-	const value = values[Math.floor(Math.random() * values.length)]
-	const suit = suits[Math.floor(Math.random() * suits.length)]
-
-	return { value, suit }
-}

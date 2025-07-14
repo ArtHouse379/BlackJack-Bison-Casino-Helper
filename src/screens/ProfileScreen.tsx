@@ -2,6 +2,7 @@ import AnimatedStars from '@/components/animation/AnimatedStars'
 import AvatarImagePicker from '@/components/AvatarImagePicker'
 import BackButton from '@/components/buttons/BackButton'
 import SettingsButton from '@/components/buttons/SettingsButton'
+import { APP_ROUTES } from '@/constants/routes'
 import { TYPOGRAPHY } from '@/constants/typography'
 import { UserProfile } from '@/types/User'
 import { updateUserProfile } from '@/utils/updateUserProfile'
@@ -191,7 +192,9 @@ export default function ProfileScreen() {
 						</View>
 
 						<View style={styles.getPremiumContainer}>
-							<Pressable onPress={() => navigation.navigate('Premium')}>
+							<Pressable
+								onPress={() => navigation.navigate(APP_ROUTES.Premium)}
+							>
 								<Text
 									style={[TYPOGRAPHY.H25, { textDecorationLine: 'underline' }]}
 								>

@@ -3,12 +3,11 @@ import BackButton from '@/components/buttons/BackButton'
 import ResultDisplay from '@/components/ResultDisplay'
 import CardDisplay from '@/components/views/CardDisplay'
 import CardPickerModal from '@/components/views/CardPickerModal'
-import { CARD_VALUES } from '@/constants/cards'
 import { TYPOGRAPHY } from '@/constants/typography'
 import { calculateWinningProbability } from '@/logic/BlackJackLogic/probability'
+import { getRandomCard } from '@/logic/HandSimulatorLogic/GetRandomCard'
 import { useBlackjackStore } from '@/store/BlackJackStore'
 import { CalculationResult } from '@/types/Calculation'
-import { PlayingCardType } from '@/types/PlayingCard'
 import { getUserProfile } from '@/utils/getUserProfile'
 import { updateUserProfile } from '@/utils/updateUserProfile'
 import React, { useEffect } from 'react'
@@ -24,11 +23,6 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 const { width, height } = Dimensions.get('window')
-
-const getRandomCard = (): PlayingCardType => {
-	const randomIndex = Math.floor(Math.random() * CARD_VALUES.length)
-	return CARD_VALUES[randomIndex] as PlayingCardType
-}
 
 const HandDecisionScreen: React.FC = () => {
 	const [modalVisible, setModalVisible] = React.useState(false)

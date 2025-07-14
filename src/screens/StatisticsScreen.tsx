@@ -2,6 +2,7 @@ import BackButton from '@/components/buttons/BackButton'
 import ProgressChart from '@/components/ProgressChart'
 import StatisticsCard from '@/components/StatisticsCard'
 import ViewReportButton from '@/components/ViewReportButton'
+import { APP_ROUTES } from '@/constants/routes'
 import { SimulationResult } from '@/types/SimulationResult'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useNavigation } from '@react-navigation/native'
@@ -106,7 +107,7 @@ const StatisticsScreen: React.FC = () => {
 	}, [userData])
 
 	const handleViewFullReport = () => {
-		navigation.navigate('Premium')
+		navigation.navigate(APP_ROUTES.Premium)
 	}
 
 	return (

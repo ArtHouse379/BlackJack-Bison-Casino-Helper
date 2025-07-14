@@ -1,17 +1,19 @@
+import { DealerDangerLevel } from '@/constants/calculations/dangerLevel'
+import {
+	WIN_CHANCE_BASE_CHANCE,
+	WIN_CHANCE_BLACKJACK,
+	WIN_CHANCE_BUST,
+	WIN_CHANCE_TWENTY_ONE,
+} from '@/constants/calculations/winChances'
+import { CARD_VALUE_MAP } from '@/constants/cardValues'
 import { PlayingCardType } from '@/types/PlayingCard'
-
-const getCardValue = (card: string): number => {
-	if (['K', 'Q', 'J'].includes(card)) return 10
-	if (card === 'A') return 11
-	return parseInt(card, 10)
-}
 
 const calculateHandValue = (cards: PlayingCardType[]): number => {
 	let total = 0
 	let aceCount = 0
 
 	for (const card of cards) {
-		const value = getCardValue(card.value)
+		const value = CARD_VALUE_MAP[card.value]
 		total += value
 		if (card.value === 'A') aceCount++
 	}
@@ -25,15 +27,15 @@ const calculateHandValue = (cards: PlayingCardType[]): number => {
 }
 
 const dealerDangerLevel = (dealerCard: PlayingCardType): number => {
-	const dealerValue = getCardValue(dealerCard.value)
+	const dealerValue = CARD_VALUE_MAP[dealerCard.value]
 
-	if (dealerCard.value === 'A') return 5 // Ace - very dangerous
-	if (dealerValue >= 10) return 4 // 10, J, Q, K - strong cards
-	if (dealerValue >= 7) return 3 // 7, 8, 9 - good cards
-	if (dealerValue === 6 || dealerValue === 5) return 2 // average cards
-	if (dealerValue <= 4) return 1 // 2, 3, 4 — weak cards
+	if (dealerCard.value === 'A') return DealerDangerLevel.VeryDangerous
+	if (dealerValue >= 10) return DealerDangerLevel.Strong
+	if (dealerValue >= 7) return DealerDangerLevel.Good
+	if (dealerValue === 6 || dealerValue === 5) return DealerDangerLevel.Average
+	if (dealerValue <= 4) return DealerDangerLevel.Weak
 
-	return 3 // default
+	return DealerDangerLevel.Good
 }
 
 export const calculateWinChance = (
@@ -43,13 +45,14 @@ export const calculateWinChance = (
 	const playerTotal = calculateHandValue(playerCards)
 	const dangerLevel = dealerDangerLevel(dealerCard)
 
-	if (playerTotal > 21) return 0 // Bust - lose
-	if (playerTotal === 21 && playerCards.length === 2) return 99 // Blackjack (2 cards) - win
-	if (playerTotal === 21) return 95 // 21 - win
+	if (playerTotal > 21) return WIN_CHANCE_BUST
+	if (playerTotal === 21 && playerCards.length === 2)
+		return WIN_CHANCE_BLACKJACK
+	if (playerTotal === 21) return WIN_CHANCE_TWENTY_ONE
 
-	let baseChance = 50
+	let baseChance = WIN_CHANCE_BASE_CHANCE
 
-	// The higher the amount, the better the chance
+	// Higher amount === better chance
 	baseChance += (playerTotal - 12) * 5 // 5% for each point over 12
 
 	// Changing the chance depending on the danger of the dealer's card

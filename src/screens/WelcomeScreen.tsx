@@ -1,3 +1,4 @@
+import { APP_ROUTES } from '@/constants/routes'
 import { TYPOGRAPHY } from '@/constants/typography'
 import { createNewUserProfile } from '@/utils/createUserProfile'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -106,7 +107,7 @@ const WelcomeScreen: React.FC = () => {
 							<Pressable
 								style={styles.primaryButton}
 								onPress={() => {
-									navigation.navigate('StrategyGuide')
+									navigation.navigate(APP_ROUTES.StrategyGuide)
 								}}
 							>
 								{({ pressed }) => (
@@ -131,7 +132,7 @@ const WelcomeScreen: React.FC = () => {
 								style={styles.secondaryButton}
 								onPress={() => {
 									setCurrentBgImageIndx(0)
-									navigation.navigate('MainMenu')
+									navigation.navigate(APP_ROUTES.MainMenu)
 								}}
 							>
 								<Text style={TYPOGRAPHY.H4}>Skip</Text>
@@ -141,7 +142,7 @@ const WelcomeScreen: React.FC = () => {
 								onPress={() => {
 									if (currentScreenIndx >= 3) {
 										setCurrentBgImageIndx(0)
-										navigation.navigate('MainMenu')
+										navigation.navigate(APP_ROUTES.MainMenu)
 									} else setCurrentBgImageIndx(currentScreenIndx + 1)
 								}}
 							>

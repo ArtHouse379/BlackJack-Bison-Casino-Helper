@@ -1,3 +1,5 @@
+import { CARD_VALUE_MAP } from './cardValues'
+
 export const CARD_SUITS = {
 	hearts: require('@assets/suits/hearts.png'),
 	spades: require('@assets/suits/spades.png'),
@@ -65,7 +67,7 @@ export const CARD_SUIT_PATH = require('@assets/playing_cards/card_suit.png')
 export const CARD_VALUES = Object.keys(CARD_PATHS).map(key => {
 	const value = key.split('_')
 	return {
-		value: value[0],
-		suit: value[1],
+		value: value[0] as keyof typeof CARD_VALUE_MAP,
+		suit: value[1] as keyof typeof CARD_SUITS,
 	}
 })
